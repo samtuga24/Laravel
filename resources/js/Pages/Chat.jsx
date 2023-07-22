@@ -8,21 +8,24 @@ import { useState } from 'react';
 import axios from 'axios';
 import { usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
-export const Chat = (props) => {
+import { array } from 'i/lib/util';
+import { SideNav } from '@/Components/SideNav';
+import { SearchMessage } from '@/Components/SearchMessage';
+export default function Chat({ receiver_id, profile }) {
     const messageRef = useRef();
     const areaRef = useRef();
     let user = usePage().props
-    let receiver_id = props.receiver_id
-    let loadmessages = props.loadmessages
-    console.log("load messages", user)
+    console.log(user.auth.user.id)
     const [message, setMessage] = useState('');
     const [emoji, setEmoji] = useState(false);
     const [keyUp, setKeyUp] = useState(false);
-    const [load, setLoad] = useState();
-
-    useEffect(()=>{
-
-    },[])
+    const [load, setLoad] = useState([]);
+    console.log("load profile", receiver_id)
+    useEffect(() => {
+        axios.get(`/load/${user.auth.user.id}/${receiver_id}`)
+            .then((response) => setLoad(response.data))
+            .catch((error) => console.log(error))
+    }, [load])
     useEffect(() => {
         if (messageRef && messageRef.current) {
             messageRef.current.style.height = "0px";
@@ -53,44 +56,49 @@ export const Chat = (props) => {
 
     let formData = new FormData();
     formData.append('message', message);
-
+    console.log("load response", load)
     const sendMessage = () => {
-        axios.post(`/messages/post/${receiver_id.id}`, formData, {
+        axios.post(`/messages/post/${receiver_id}`, formData, {
             headers: {
                 'Content-Type': "multipart/form-data",
                 'enctype': 'multipart/form-data'
             }
         }).then((response) => {
-            setLoad(response);
-            console.log(load)
+            setLoad(prev => [...prev, response.data]);
             setMessage(" ")
         }).catch((error) => {
             console.log(error);
         })
     }
 
+
     const onKeyPress = (e) => {
-        if(e.which === 13) {
-          sendMessage();
-          e.preventDefault();
+        if (e.which === 13) {
+            sendMessage();
+            e.preventDefault();
         }
-      }
+    }
 
     return (
-        <div className='profile-wrap'>
+        <div className='dash-wrap'>
+            <div className='side-nav'><SideNav /></div>
             <div className='header'>Messages</div>
-            <div className='chat-body'>
-                <div className='chat-header'>
-                    <div className='chat-profile-image'><img src={user.profile.image ? "/storage/"+user.profile.image : "/storage/profile/blank.svg"} alt="" /></div>
-                    <div className='chat-profile-name'>{props.username}</div>
-                </div>
-                <div className='display-message'>
-                    {loadmessages.map((item, index) => (
-                        <div className={user.auth.user.id == item.sender_id ? 'sent-wrap' : 'reply-wrap'}>{item.message}</div>
-                    ))}
+            <div className='home'>
+                <div className='chat-body'>
+                    <div className='chat-header'>
+                        <div className='chat-profile-image'><img src={user.profile.image ? "/storage/" + user.profile.image : "/storage/profile/blank.svg"} alt="" /></div>
+                        <div className='chat-profile-name'>
+                            {profile.name}
+                        </div>
 
+                    </div>
+                    <div className='display-message'>
+                        {load.map((item, index) => (
+                            <div className={user.auth.user.id == item.sender_id ? 'sent-wrap' : 'reply-wrap'}>{item.message}</div>
+                        ))}
+
+                    </div>
                 </div>
-            </div>
                 <div className='text-message-area'>
                     <div className='text-message-wrap' ref={areaRef}>
                         <div className='message-selected-image'>
@@ -105,6 +113,8 @@ export const Chat = (props) => {
                         {keyUp && <div className='text-paper-icon'><FontAwesomeIcon icon={faPaperPlane} className='' type='submit' onClick={sendMessage} /></div>}
                     </div>
                 </div>
+            </div>
+            <div className='search-message'><SearchMessage /></div>
         </div>
     )
 }

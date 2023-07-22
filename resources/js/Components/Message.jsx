@@ -4,11 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link, usePage } from '@inertiajs/react';
 export const Message = (props) => {
     const auth = usePage().props;
-    let profile = props.profile
-    console.log("message", profile[0])
+    console.log("message", auth.auth.user.following)
     // let following = props.following
-    
-    console.log("profile-message", profile[0])
+    let profile = props.profile
+    console.log("profile-message", profile[0].followers)
+    // let followers = props.followers
+    // let authUser = props.auth
+    // let authFollowers = props.authFollowers
     const [message, setMessage] = useState(true);
     const [messageUp, setMessageUp] = useState(false);
     const clickUp = () => {
@@ -28,7 +30,7 @@ export const Message = (props) => {
             }
         })
     })
-    console.log("check",profile[0])
+    console.log("check",checkFollowers)
 
     return (
         <>

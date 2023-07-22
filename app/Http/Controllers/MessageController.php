@@ -19,14 +19,14 @@ class MessageController extends Controller
     }
     public function index(User $user)
     {
-        
-        return Inertia::render('MessageView',[
-            'profile'=>$user->profile,
-            'messages'=>$this->chat->getUserMessages(request()->user()->id, $user->id),
-            'receiver_id'=>$user,
+        // dd($user);
+        return Inertia::render('Chat',[
+            "receiver_id"=>$user->id,
+            "profile"=>$user->profile,
         ]);
     }
 
+ 
 
     public function store($id)
     {

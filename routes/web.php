@@ -7,6 +7,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Profile;
+use App\Repositories\ChatRepository;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -44,6 +45,7 @@ Route::get('/dashboard', function () {
 // })->middleware(['auth', 'verified'])->name('message');
 
 Route::get('/messages/{user}', [MessageController::class, 'index']);
+Route::get('/load/{user}/{id}', [ChatRepository::class, 'show']);
 Route::get('/nav/{id}', [ProfileController::class, 'index']);
 Route::post('/messages/post/{id}', [MessageController::class, 'store']);
 Route::post('/post', [PostController::class, 'store']);
