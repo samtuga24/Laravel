@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\DashController;
 use App\Http\Controllers\FollowsController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MessageController;
@@ -36,6 +37,8 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('dashboard/{user}',[DashController::class,'show']);
+
 // Route::get('/profile/1', function () {
 //     return Inertia::render('UserPage');
 // })->middleware(['auth', 'verified'])->name('profile');
@@ -45,12 +48,14 @@ Route::get('/dashboard', function () {
 // })->middleware(['auth', 'verified'])->name('message');
 
 Route::get('/messages/{user}', [MessageController::class, 'index']);
+Route::get('/follow-status/{user}', [ProfileController::class, 'status']);
 Route::get('/load/{user}/{id}', [ChatRepository::class, 'show']);
 Route::get('/nav/{id}', [ProfileController::class, 'index']);
 Route::post('/messages/post/{id}', [MessageController::class, 'store']);
 Route::post('/post', [PostController::class, 'store']);
 Route::get('/following', [PostController::class, 'show']);
 Route::get('/search/{name}', [ProfileController::class, 'search']);
+Route::get('/followers/{user}', [ProfileController::class, 'followers']);
 Route::get('/comment/{id}', [CommentController::class, 'show']);
 Route::post('/comment/{id}', [CommentController::class, 'store']);
 Route::post('/like/{post}', [LikeController::class, 'store']);

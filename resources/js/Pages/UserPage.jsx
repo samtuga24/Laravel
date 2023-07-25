@@ -2,18 +2,21 @@ import { Message } from '@/Components/Message'
 import { SearchMessage } from '@/Components/SearchMessage'
 import { SideNav } from '@/Components/SideNav'
 import { faEnvelope, faHeart, faComment } from '@fortawesome/free-regular-svg-icons';
-import { faLocationDot, faCalendarDays, faLink, faXmarkCircle, faCircle, faEllipsis } from '@fortawesome/free-solid-svg-icons';
+import { faLocationDot, faCalendarDays, faLink, faXmarkCircle, faCircle, faEllipsis, faHeart as SolidHeart } from '@fortawesome/free-solid-svg-icons';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { EditModal } from '../Components/EditModal';
 import React, { useState } from 'react'
-import { Head, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { UserProfile } from '@/Components/UserProfile';
 import axios from 'axios';
 import { useEffect } from 'react';
-export default function UserPage({ profile, follows }) {
+import { isEmpty } from 'lodash';
+export default function UserPage({profile,auth_following}) {
     const auth = usePage().props;
-    console.log(profile)
+    console.log('auth',auth)
+    console.log('profile',profile[0])
+    console.log('auth_following',auth_following)
     const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let joined = new Date(profile[0].created_at);
     let monthJoined = month[joined.getMonth()]
@@ -22,31 +25,55 @@ export default function UserPage({ profile, follows }) {
     const [post, setPost] = useState(true)
     const [media, setMedia] = useState(false)
     const [heart, setHeart] = useState(false)
-    const [followStatus, setFollowUpdate] = useState(follows);
+    const [like, setLike] = useState(false);
+    const [comment, setComment] = useState(false)
+    let matchFollowing
+    auth_following.map((item, index) => {
+        console.log("item-id",item.id)
+        if (profile[0].user_id == item.id) {
+            matchFollowing = true
+        }
+        else {
+            matchFollowing = false
+        }
+    })
+    console.log(matchFollowing)
+    const [toggle, setToggle] = useState(matchFollowing);
 
     const clickPost = () => {
         setPost(true)
         setMedia(false)
         setHeart(false)
+        setComment(false)
     }
     const clickMedia = () => {
         setPost(false)
         setMedia(true)
         setHeart(false)
+        setComment(false)
     }
     const clickLike = () => {
         setPost(false)
         setMedia(false)
         setHeart(true)
+        setComment(false)
+    }
+    const clickComment = () => {
+        setPost(false)
+        setMedia(false)
+        setHeart(false)
+        setComment(true)
     }
     const submitFollow = (e) => {
         e.preventDefault();
         axios.post(`/follow/${profile[0].id}`).then((response) => {
             console.log("response", response.data)
             setFollowUpdate(!followStatus)
+            setToggle(!toggle)
         }).catch((error) => {
             console.log(error)
         })
+
     }
     const calcTime = (time) => {
         const current = new Date();
@@ -70,7 +97,20 @@ export default function UserPage({ profile, follows }) {
             return "a long time ago"
         }
     }
-    // console.log("userpost",userposts)
+
+    const onCommentClick = (e) => {
+        e.preventDefault()
+        alert("comment")
+    }
+
+    const submitLike = (id) => {
+        // e.preventDefault();
+        axios.post(`/like/${id}`)
+            .then((response) => console.log("home response", response.data))
+            .catch((error) => console.log(error))
+        setLike(!like);
+    }
+
     return (
         <div className='dash-wrap'>
             <div className='side-nav'><SideNav /></div>
@@ -79,8 +119,9 @@ export default function UserPage({ profile, follows }) {
                     <div className='header'>
                         {profile[0].name}
                         {post && <div className='post-count'>{profile[0].user.comments.length + profile[0].user.posts.length} Posts</div>}
+                        {comment && <div className='post-count'>{profile[0].user.comments.length} Comments</div>}
                         {media && <div className='post-count'>10K Media</div>}
-                        {heart && <div className='post-count'>{profile[0].user.unlike.length} Likes</div>}
+                        {heart && <div className='post-count'>{profile[0].user.like.length} Likes</div>}
                     </div>
                     <div className='profile-header'><img src={profile[0].header ? "/storage/" + profile[0].header : "/storage/header/header.jpg"} alt="" /></div>
                     <div className='user-profile-image'>
@@ -93,15 +134,12 @@ export default function UserPage({ profile, follows }) {
                         </div>
                         :
                         <div className='edit-button'>
-                            <button className='edit-profile' onClick={submitFollow}>{follows ? 'Following ' : 'Follow'}</button>
-                            {/* <div className='profile-message'><FontAwesomeIcon icon={faEnvelope} className='' /></div> */}
+                            <button className='edit-profile' onClick={submitFollow}>{toggle ? 'Following ' : 'Follow'}</button>
                         </div>
                     }
                     {<EditModal
                         show={modalShow}
                         onHide={() => setModalShow(false)}
-                        profile={profile}
-
                     />}
                     <div className='user-handle'>
                         <div className='username'>{profile[0].name}</div>
@@ -113,7 +151,12 @@ export default function UserPage({ profile, follows }) {
                             {profile[0].website && <div className='website'><FontAwesomeIcon icon={faLink} className='' /><span className=''><a href="" className='website-text'>{profile[0].website}</a></span></div>}
                         </div>
                         <div className='profile-following'>
-                            <div className='ff-count'><span className='count'>{profile[0].user.following.length}</span><span className='ff'> Following</span></div>
+                            <Link href={`/followers/${profile[0].id}`} className='links'>
+                                <div className='ff-count'>
+                                    <span className='count'>{profile[0].user.following.length}</span>
+                                    <span className='ff'> Following</span>
+                                </div>
+                            </Link>
                             <div className='ff-count'><span className='count'>{profile[0].followers.length}</span><span className='ff'> Followers</span></div>
                         </div>
                     </div>
@@ -122,6 +165,10 @@ export default function UserPage({ profile, follows }) {
                         <div className='post-tab' onClick={clickPost}>
                             Posts
                             {post && <div className='post-tab-decoration'></div>}
+                        </div>
+                        <div className='post-tab' onClick={clickComment}>
+                            Comments
+                            {comment && <div className='comment-tab-decoration'></div>}
                         </div>
                         <div className='media-tab' onClick={clickMedia}>
                             Media
@@ -132,17 +179,38 @@ export default function UserPage({ profile, follows }) {
                             {heart && <div className='like-tab-decoration'></div>}
                         </div>
                     </div>
-                    {/* {post &&
+                    {post &&
+                        profile[0].user.posts.map((item, index) => (
+                            <Link href={`/comment/${item.id}`} className='links'>
+                                <div className='post-body' key={index}>
+                                    <div className='post-header'>
+                                        <img src={profile[0].image ? '/storage/' + profile[0].image : '/storage/profile/blank.svg'} alt="" className='post-profile-image' />
+                                        <div className='post-username-wrap'><span className='post-username'>{profile[0].name}</span>@{profile[0].username}<span className='post-time'><FontAwesomeIcon icon={faCircle} className='circle' />{calcTime(item.created_at)}</span></div>
+                                        <div className='action-wrap'><FontAwesomeIcon icon={faEllipsis} className='post-action' /></div>
+                                    </div>
+                                    <div className='post-content'>
+                                        {item.content && <p className='user-post-content'>{item.content}</p>}
+                                        {item.image && <img src={`/storage/${item.image}`} alt="" />}
+                                        <div className='post-comments'>
+                                            <div className='comment-wrap'><div className='comment-hover'><FontAwesomeIcon icon={faComment} className='comment-icon' /></div>{item.comments.length}</div>
+                                            <div className='like-wrap'><div className='like-hover' onClick={() => submitLike(item.id)}><FontAwesomeIcon icon={like ? SolidHeart : faHeart} beat={like ? true : false} className='comment-icon' id={like ? 'click-color' : null} /></div>{item.unlike.length}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))
 
-                        profile[0].map((item, index) => (
+                    }
+                    {comment &&
+                        profile[0].user.comments.map((item, index) => (
                             <div className='post-body' key={index}>
                                 <div className='post-header'>
-                                    <img src={item.user.profile.image ? '/storage/' + item.user.profile.image : '/storage/profile/blank.svg'} alt="" className='post-profile-image' />
-                                    <div className='post-username-wrap'><span className='post-username'>{item.user.name}</span>@{item.user.username}<span className='post-time'><FontAwesomeIcon icon={faCircle} className='circle' />{calcTime(item.created_at)}</span></div>
+                                    <img src={profile[0].image ? '/storage/' + profile[0].image : '/storage/profile/blank.svg'} alt="" className='post-profile-image' />
+                                    <div className='post-username-wrap'><span className='post-username'>{profile[0].name}</span>@{profile[0].username}<span className='post-time'><FontAwesomeIcon icon={faCircle} className='circle' />{calcTime(item.created_at)}</span></div>
                                     <div className='action-wrap'><FontAwesomeIcon icon={faEllipsis} className='post-action' /></div>
                                 </div>
                                 <div className='post-content'>
-                                    <p className='user-post-content'>{item.content}</p>
+                                    <p className='user-post-content'>{item.comment}</p>
                                     {item.image && <img src={`/storage/${item.image}`} alt="" />}
                                     <div className='post-comments'>
                                         <div className='comment-hover'><FontAwesomeIcon icon={faComment} className='comment-icon' /></div>
@@ -151,12 +219,11 @@ export default function UserPage({ profile, follows }) {
                                 </div>
                             </div>
                         ))
-
-                    } */}
+                    }
                 </div>
             </div>
             <div className='search-message'><SearchMessage /></div>
-            <Message profile={profile} />
+            <Message />
         </div>
     )
 }

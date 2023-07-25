@@ -7,10 +7,11 @@ import { usePage } from '@inertiajs/react';
 export const EditModal = (props) => {
     const auth = usePage().props
     const [remove, setRemove] = useState(false);
-    const [remove_url, setRemoveUrl] = useState('')
+    const [show_profile, setShowProfile] = useState(false)
     const [show, setShow] = useState(false);
-    const [header_url, setHeaderUrl] = useState('');
-    const [error, setError] = useState("");
+    const [header_url, setHeaderUrl] = useState(null);
+    const [image_url, setImageUrl] = useState(null);
+    const [error, setError] = useState([]);
     const [select, setSelect] = useState(false);
     const [selectBio, setSelectBio] = useState(false);
     const [selectLocation, setSelectLocation] = useState(false);
@@ -21,28 +22,44 @@ export const EditModal = (props) => {
     const bioRef = useRef(null);
     const locationRef = useRef(null);
     const websiteRef = useRef(null);
-    const [header, setHeader] = useState(auth.auth.user.profile.header);
-    const [image, setImage] = useState(auth.auth.user.profile.image);
-    const [webcount, setWebcount] = useState(0);
+    const [header, setHeader] = useState([]);
+    const [image, setImage] = useState([]);
+    const [header_display, setHeaderDisplay] = useState(auth.profile[0].header);
+    const [image_display, setImageDisplay] = useState(auth.profile[0].image);
+
+    // const [webcount, setWebcount] = useState(0);
     const [locationcount, setLocationcount] = useState(0);
     const [biocount, setBiocount] = useState(0);
-    
-    console.log("this is the passed data",auth.auth.user.profile.name)
-    
-    const [form, setForm] = useState({
-        name: auth.auth.user.profile.name,
-        bio: auth.auth.user.profile.bio,
-        location: auth.auth.user.profile.location,
-        website: auth.auth.user.profile.website,
-    })
 
-    // console.log(form)
-    const removeHeader = () =>{
+    console.log("this is the passed data")
+
+    const [form, setForm] = useState({
+        name: auth.profile[0].name,
+        bio: auth.profile[0].bio ?? "",
+        location: auth.profile[0].location ?? "",
+        website: auth.profile[0].website ?? "",
+    })
+    console.log("website",form.website)
+
+    // let name_length
+    // useEffect(() => {
+    //     if (form.name.trim().length < 1) {
+    //         name_length = false
+    //     } else {
+    //         name_length = true
+    //     }
+    // }, [form.name])
+
+    console.log("check-image", auth.profile[0]?.header)
+
+    console.log('edit', auth.profile[0].username)
+    const removeHeader = () => {
         setRemove(true);
         setShow(false);
-        setRemoveUrl("/storage/header/headerdefault.jpg");
+        setHeaderUrl(null);
     }
 
+    console.log(show)
 
     // useEffect(() => {
     //     setLocationcount(form.location.length);
@@ -62,16 +79,21 @@ export const EditModal = (props) => {
     }
 
     const onChangeHeader = (event) => {
-        setHeader(event.target.files[0]);
+        
         if (event.target.files && event.target.files[0]) {
             setHeaderUrl(URL.createObjectURL(event.target.files[0]));
+            setHeader(event.target.files[0]);
             setRemove(false);
             setShow(true)
-        }
+        } 
     }
+
+    console.log("header-image",header)
 
     const onChangeImage = (event) => {
         setImage(event.target.files[0]);
+        setImageUrl(URL.createObjectURL(event.target.files[0]));
+        setShowProfile(true)
     }
 
     const clickWebsite = () => {
@@ -108,17 +130,25 @@ export const EditModal = (props) => {
     formData.append('_method', 'PATCH');
 
     const submitForm = () => {
-        axios.post(`/p/${auth.auth.user.id}`, formData, {
+        axios.post(`/p/${auth.profile[0].user.id}`, formData, {
             headers: {
                 'Content-Type': "multipart/form-data",
                 'enctype': 'multipart/form-data'
             }
         }).then((response) => {
+            console.log("edit-profile", response.data)
         }).catch((error) => {
             setError(error.response.data.errors)
+            // console.log(error.response.data.errors)
         })
     }
-    console.log(webcount)
+
+    console.log("Errors", error?.header)
+    let name_error = error?.name;
+    let header_error = error?.header;
+    let image_error = error?.image;
+    let website_error = error?.website;
+
     return (
         <Modal
             {...props}
@@ -136,8 +166,7 @@ export const EditModal = (props) => {
             <Modal.Body className='modal-body'>
                 <div className='form-wrap'>
                     <div className='edit-header'>
-                        <img src={auth.auth.user.profile.header ? "/storage/"+auth.auth.user.profile.header : "/storage/header/header.jpg"} alt="" />
-                        {/* {show && <img src={remove ? remove_url : header_url} alt="" />} */}
+                        <img src={auth.profile[0].header ? "/storage/" + auth.profile[0].header : (header_url ?? "/storage/header/header.jpg")} alt="" />
                         <div className='select-wrap' onClick={selectHeader}>
                             <FontAwesomeIcon icon={faCamera} className='' />
                         </div>
@@ -149,7 +178,7 @@ export const EditModal = (props) => {
                     <div className='edit-profile-image'>
                         <div className='profile'>
                             <div className='select-profile' onClick={selectImage}><FontAwesomeIcon icon={faCamera} className='' /></div>
-                            <img src={auth.auth.user.profile.image ? "/storage/"+auth.auth.user.profile.image : "/storage/profile/blank.svg"} alt="" />
+                            <img src={auth.profile[0].image ? "/storage/" + auth.profile[0].image : (image_url ?? "/storage/profile/blank.svg")} alt="" />
                         </div>
                         <div onClick={selectImage}>
                             <input type="file" onChange={onChangeImage} ref={imageRef} style={{ display: 'none' }} accept='image/*' />
@@ -162,7 +191,7 @@ export const EditModal = (props) => {
                             </div>
                             <input type="text" className='name-form-input' name="name" value={form.name} onChange={onUpdateForm} placeholder='Name' ref={nameRef} onBlur={() => setSelect(false)} onFocus={() => setSelect(true)} maxLength={50} />
                         </div>
-                        {/* {error.name &&<div className='error'>{error.name}</div>} */}
+                        {error?.name &&<div className='error'>{name_error}</div>}
                     </div>
                     <div className='profile-bio-wrap'>
                         <div className='edit-form-bio' id={selectBio ? 'focus-border' : null} onClick={clickBio}>
@@ -171,7 +200,6 @@ export const EditModal = (props) => {
                             </div>
                             <textarea type="url" className='bio-form-input' name='bio' value={form.bio} onChange={onUpdateForm} placeholder='Bio' maxLength={160} ref={bioRef} onBlur={() => setSelectBio(false)} onFocus={() => setSelectBio(true)}></textarea>
                         </div>
-                        {/* {error.bio && <div className='error'>{error.bio}</div>} */}
                     </div>
                     <div className='profile-name-wrap'>
                         <div className='edit-form-input' id={selectLocation ? 'focus-border' : null} onClick={clickLocation}>
@@ -180,16 +208,15 @@ export const EditModal = (props) => {
                             </div>
                             <input type="text" className='name-form-input' name='location' placeholder='Location' value={form.location} onChange={onUpdateForm} ref={locationRef} onBlur={() => setSelectLocation(false)} onFocus={() => setSelectLocation(true)} maxLength={30} />
                         </div>
-                        {/* {error.location && <div className='error'>{error.location}</div>} */}
                     </div>
                     <div className='profile-name-wrap'>
                         <div className='edit-form-input' id={selectWebsite ? 'focus-border' : null} onClick={clickWebsite}>
                             <div className={selectWebsite ? 'show-label' : 'label'}>
-                                <span className='label-name' id='focus-color'>Website</span><span className='input-limit-label'>{webcount}/100</span>
+                                <span className='label-name' id='focus-color'>Website</span><span className='input-limit-label'>/100</span>
                             </div>
                             <input type="text" className='name-form-input' name='website' placeholder='Website' value={form.website} onChange={onUpdateForm} ref={websiteRef} onBlur={() => setSelectWebsite(false)} onFocus={() => setSelectWebsite(true)} maxLength={100} />
                         </div>
-                        {/* {error && <div className='error'>{error.website}</div>} */}
+                        {error?.website && <div className='error'>{website_error}</div>}
                     </div>
                 </div>
             </Modal.Body>

@@ -110,8 +110,8 @@ export default function Comments(props) {
                     </div>
 
                     <div className='comments'>
-                        <div className='comment-hover'><FontAwesomeIcon icon={faComment} className='comment-icon' /></div>
-                        <div className='comment-hover'><FontAwesomeIcon icon={faHeart} className='comment-icon' /></div>
+                        <div className='comment-wrap'><div className='comment-hover'><FontAwesomeIcon icon={faComment} className='comment-icon' /></div></div>
+                        <div className='like-wrap'><div className='like-hover'><FontAwesomeIcon icon={faHeart} className='comment-icon' /></div></div>
                     </div>
                 </div>
 
@@ -157,8 +157,8 @@ export default function Comments(props) {
                                     <img src={item.image ? "/storage/" + item.image : null} alt="" />
 
                                     <div className='post-comments'>
-                                        <div className='comment-hover'><FontAwesomeIcon icon={faComment} className='comment-icon' /></div>
-                                        <div className='like-hover'><FontAwesomeIcon icon={faHeart} className='comment-icon' /></div>
+                                        <div className='comment-wrap'><div className='comment-hover'><FontAwesomeIcon icon={faComment} className='comment-icon' /></div></div>
+                                        <div className='like-wrap'><div className='like-hover'><FontAwesomeIcon icon={faHeart} className='comment-icon' /></div></div>
                                     </div>
                                 </div>
                             </div>

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Post;
 use App\Models\Profile;
@@ -24,6 +24,14 @@ class ProfileController extends Controller
         $this->middleware('auth');
     }
     
+    public function followers(User $user)
+    {
+        return Inertia::render('FollowersPage',[
+            'user'=>$user,   
+            'following'=>$user->following,
+            'followers'=>$user->profile->followers
+        ]);
+    }
     public function index()
     {
         $user = Profile::where('user_id',request()->user()->id)->get();
@@ -36,13 +44,12 @@ class ProfileController extends Controller
     }
      public function show(User $user): Response
      {
-        // $userposts = Post::with(['user','unlike','comments'])->where('user_id', '=', $user->id)->latest()->get();
-        $profile = Profile::with(['user.posts','user.following','followers','user.unlike'])->where('user_id', '=', $user->id)->get();
-        $follows = (auth()->user()) ? auth()->user()->following->contains($user) : false;
 
+        $profile = Profile::with(['user.following','followers','user.posts.unlike','user.posts.comments','user.comments','user.like'])->where('user_id', '=', $user->id)->get();
+        $auth_following = auth()->user()->following()->get();
         return Inertia::render('UserPage',[
             "profile"=>$profile,
-            "follows"=>$follows,
+            "auth_following"=>$auth_following,
         ]);
      }
     public function edit(Request $request): Response
@@ -69,34 +76,34 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit');
     }
 
-    public function update(User $user): RedirectResponse
+    public function update(User $user)
     {
         $this->authorize('update',$user->profile);
         $data = request()->validate([
-            "header"=>["image","nullable"],
-            "image"=>["image","nullable"],
-            "bio"=>"nullable",
-            "location"=>"nullable",
-            "name"=>"required",
-            "website"=>["nullable","url"],
+            'header'=>'nullable|image',
+            'image'=>'nullable|image',
+            'bio'=>'',
+            'location'=>'',
+            'name'=>"required",
+            'website'=>'nullable|url',
 
         ]);
-        $imagePath = request('image')->store('profile','public');
+        $headerArray = [];
+        $imageArray = [];
         if(request('header')){
             $headerPath = request('header')->store('header','public');
             $headerArray = ["header" => $headerPath];
         }
-        $imagePath = request('image')->store('profile','public');
         if(request('image')){
             $imagePath = request('image')->store('profile','public');
             $imageArray = ["image" => $imagePath];
         }
-        auth()->user()->profile()->update(array_merge(
+        $sent = auth()->user()->profile()->update(array_merge(
             $data,
-            ["image" => $imagePath],
-            ["header" => $headerPath]
+            $headerArray,
+            $imageArray
         ));
-        return Redirect::to("/profile/{$user->id}");
+        return $sent;
     }
 
     /**

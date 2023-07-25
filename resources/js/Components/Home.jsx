@@ -9,9 +9,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 import axios from 'axios';
 export const Home = (props) => {
-    const { auth } = usePage().props;
-    const [count, setCount] = useState(0);
-
+    const [home, setHome] = useState([]);
     const [emoji, setEmoji] = useState(false);
     const [showContent, setShowContent] = useState(true);
     const [close, setClose] = useState(false);
@@ -22,6 +20,25 @@ export const Home = (props) => {
     const [like, setLike] = useState(false);
     const postRef = useRef();
     const areaRef = useRef();
+    const auth_user = usePage().props.auth;
+
+    useEffect(()=>{
+        axios.get(`/dashboard/${auth_user.user.id}`)
+        .then((response)=>{
+            setHome(response.data[0])
+        })
+        .catch((error)=>console.log(error))
+    },[])
+
+    useEffect(()=>{
+        axios.get("/following")
+        .then((response)=>{
+            setPosts(response.data)
+        })
+        .catch((error)=>console.log(error))
+    },[])
+    // console.log('posts', posts)
+
     useEffect(() => {
         if (postRef && postRef.current) {
             postRef.current.style.height = "0px";
@@ -64,14 +81,6 @@ export const Home = (props) => {
         setContent(prevPost => prevPost + event.emoji);
     }
 
-    useEffect(() => {
-        axios.get('/following')
-            .then((response) => { setPosts(response.data) })
-            .catch((error) => { console.log(error) });
-    }, [])
-
-    console.log(posts)
-
     const calcTime = (time) => {
         const current = new Date();
         const postTime = new Date(time);
@@ -112,7 +121,7 @@ export const Home = (props) => {
         <div className='home-wrap'>
             <div className='header'>Home</div>
             <div className='post-form'>
-                <div className='profile-icon'><img src={auth.user.profile.image ? "/storage/" + auth.user.profile.image : "/storage/profile/blank.svg"} alt="" /></div>
+                <div className='profile-icon'><img src={"/storage/profile/blank.svg"} alt="" /></div>
                 <div className='input-form' ref={areaRef}>
                     <form action="/post" encType='multipart/form-data' method='post' style={{ position: 'relative' }}>
                         <textarea name="content" ref={postRef} value={content} onChange={updatePost} id="" placeholder="What's up?!" maxLength={200} className='text-area'></textarea>

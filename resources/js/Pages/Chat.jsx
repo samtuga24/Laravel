@@ -14,6 +14,7 @@ import { SearchMessage } from '@/Components/SearchMessage';
 export default function Chat({ receiver_id, profile }) {
     const messageRef = useRef();
     const areaRef = useRef();
+    const imageRef = useRef();
     let user = usePage().props
     console.log(user.auth.user.id)
     const [message, setMessage] = useState('');
@@ -28,7 +29,7 @@ export default function Chat({ receiver_id, profile }) {
     }, [load])
     useEffect(() => {
         if (messageRef && messageRef.current) {
-            messageRef.current.style.height = "0px";
+            messageRef.current.style.height = "0px"
             const taHeight = messageRef.current.scrollHeight;
             messageRef.current.style.height = taHeight + "px";
             areaRef.current.style.height = taHeight + "px";
@@ -101,15 +102,18 @@ export default function Chat({ receiver_id, profile }) {
                 </div>
                 <div className='text-message-area'>
                     <div className='text-message-wrap' ref={areaRef}>
-                        <div className='message-selected-image'>
-                            <img src="" alt="" />
-                            <FontAwesomeIcon icon={faXmarkCircle} className='close-image' />
-                        </div>
                         <div className='text-icon' onClick={clickPhoto}><FontAwesomeIcon icon={faImage} className='' /></div>
                         <input type="file" className='message-photo' ref={photoRef} accept='image/*' name='image' />
                         {emoji && <div className='message-emoji'><EmojiPicker height={400} width="100%" onEmojiClick={onEmojiClick} /></div>}
                         <div className='text-smile-icon' onClick={emojiClick}><FontAwesomeIcon icon={faFaceSmile} className='' /></div>
-                        <div className='chat-area'><textarea name="message" ref={messageRef} value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={onKeyPress} className='chat-text-area' maxLength={150} placeholder='start a new message here'></textarea></div>
+                        <div className='chat-area'>
+                            <div className='message-selected-image' ref={imageRef}>
+                                <img src="/storage/profile.blank.svg" alt="" />
+                                <FontAwesomeIcon icon={faXmarkCircle} className='close-image' />
+                            </div>
+                            <textarea name="message" ref={messageRef} value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={onKeyPress} className='chat-text-area' maxLength={150} placeholder='start a new message here'>
+                            </textarea>
+                        </div>
                         {keyUp && <div className='text-paper-icon'><FontAwesomeIcon icon={faPaperPlane} className='' type='submit' onClick={sendMessage} /></div>}
                     </div>
                 </div>

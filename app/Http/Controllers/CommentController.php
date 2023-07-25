@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Redirect;
 
 class CommentController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function show($id)
     {
         $post = Post::with(['user','unlike'])->where('id', '=', $id)->get();

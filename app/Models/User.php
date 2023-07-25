@@ -25,8 +25,6 @@ class User extends Authenticatable
         'password',
     ];
 
-    protected $with = ['profile','comments','posts'];
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -57,7 +55,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function unlike()
+    public function like()
     {
         return $this->belongsToMany(Post::class);
     }

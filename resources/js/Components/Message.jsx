@@ -7,7 +7,7 @@ export const Message = (props) => {
     console.log("message", auth.auth.user.following)
     // let following = props.following
     let profile = props.profile
-    console.log("profile-message", profile[0].followers)
+    // console.log("profile-message", profile[0].followers)
     // let followers = props.followers
     // let authUser = props.auth
     // let authFollowers = props.authFollowers
@@ -22,15 +22,15 @@ export const Message = (props) => {
         setMessageUp(false)
     }
 
-    const checkFollowers = []
-    auth.auth.user.following.map((following, i) => {
-        profile[0].followers.map((followers, i) => {
-            if ((following.id === followers.id)) {
-                checkFollowers.push(following);
-            }
-        })
-    })
-    console.log("check",checkFollowers)
+    // const checkFollowers = []
+    // auth.auth.user.following.map((following, i) => {
+    //     profile[0].followers.map((followers, i) => {
+    //         if ((following.id === followers.id)) {
+    //             checkFollowers.push(following);
+    //         }
+    //     })
+    // })
+    // console.log("check",checkFollowers)
 
     return (
         <>
@@ -50,7 +50,7 @@ export const Message = (props) => {
                         <div className='icon-wrap'><FontAwesomeIcon icon={faAnglesDown} className='icon-angle' /></div>
                     </div>
                     <div style={{ marginTop: '8vh' }}>
-                        {checkFollowers.map((index, i) => (
+                        {/* {checkFollowers.map((index, i) => (
                         <Link href={`/messages/${index.id}`} className='links'>
                         <div>
                             <div className='message-list' onClick={() => console.log("index")}>
@@ -59,7 +59,7 @@ export const Message = (props) => {
                             </div>
                         </div>
                         </Link>
-                        ))}
+                        ))} */}
                     </div>
                 </div>
             }
