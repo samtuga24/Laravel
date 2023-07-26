@@ -156,21 +156,26 @@ body{
   align-items: center;
 }
 .result-name{
-  font-size: 1.4vw;
+  font-size: 1.3vw;
   display: flex;
   flex-direction: column;
-  margin-top: -1vh;
+  margin-top: -0.5vh;
+}
+.result-handle{
+  font-size: 1.2vw;
+  margin-top: -0.2vw;
+  color: gray;
 }
 
 .result-image{
-  height: 4.6vw;
-  width: 4.6vw;
+  height: 3.5vw;
+  width: 3.5vw;
   border-radius: 50%;
   margin-right: 0.5vw;  
 }
 .result-image img{
-  height: 4.6vw;
-  width: 4.6vw;
+  height: 3.5vw;
+  width: 3.5vw;
   border-radius: 50%;
 }
 
@@ -695,6 +700,7 @@ body{
   border-radius: 1.2vw;
   font-weight: 600;
   font-size: 1.2vw;
+  top: 1.5vh;
 }
 .edit-profile:hover{
   background-color: rgb(236, 234, 234);
@@ -868,7 +874,7 @@ body{
   bottom: 0;
 }
 .chat-body{
-  margin-top: 6vh;
+  margin-top: 2vh;
   height: 85vh;
   overflow-y: scroll;
   position: relative;
@@ -1575,5 +1581,89 @@ margin-right: 3vw;
  .arrow:hover{
   background-color: #d8d9d9;
  }
+ .show-result{
+  height: fit-content;
+  padding-bottom: 2vh;
+  width: 26vw;
+  margin-left: 2.5vw;
+  border-radius: 1vw;
+  margin-top: 10vh;
+  padding-top: 2vh;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+ }
+ .notification-wrap{
+  height: fit-content;
+  position: relative;
+  margin-top: 7vh;
+ }
+
+ .notify-head{
+  position: fixed;
+  z-index: 1;
+  background-color: #fff;
+  width: 50vw;
+  height: 7vh;
+  display: flex;
+  align-items: center;
+  font-size: 1.6vw;
+  font-weight: 900;
+  padding-left: 1.2vw;
+ }
+.notification{
+  border: 1px solid #eef1f1;
+  width: 100%;
+  height: fit-content;
+  cursor: pointer;
+  padding-top: 2vh;
+  padding-bottom: 2vh;
+}
+.notification:hover{
+  background-color: #eef1f1;
+}
+.notification-header{
+  display: flex;
+  padding-left: 1.3vw;
+}
+.notification-content{
+  margin-left: 5.1vw;
+  font-size: 1.3vw;
+  color: #656464;
+}
+.notify-icon{
+  width: fit-content;
+  height: fit-content;
+  font-size: 1.8vw;
+  margin-right: 1.7vw;
+  color: #1DA1F2;
+}
+
+.heart-icon{
+  width: fit-content;
+  height: fit-content;
+  font-size: 1.8vw;
+  margin-right: 1.7vw;
+  color: red;
+}
+.notify-image{
+  height: 3vw;
+  width: 3vw;
+  border-radius: 50%;
+}
+.notify-image img{
+  height: 3vw;
+  width: 3vw;
+  border-radius: 50%;
+}
+.notify-username{
+  font-weight: 700;
+  margin-right: 0.5vw;
+}
+.notification-post{
+  width: fit-content;
+  height: fit-content;
+  margin-left: 5.1vw;
+  font-size: 1.3vw;
+  color: #868585;
+}
 
 

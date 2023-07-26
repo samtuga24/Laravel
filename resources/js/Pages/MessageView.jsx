@@ -16,7 +16,6 @@ export default function MessageView({profile, messages, receiver_id}) {
         <div className='side-nav'><SideNav /></div>
         <div className='home'><Chat username={profile.username} image={profile.image} receiver_id={receiver_id} loadmessages={messages}/></div>
         <div className='search-message'><SearchMessage /></div>
-        {/* <Message /> */}
     </div>
     );
 }

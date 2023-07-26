@@ -7,52 +7,47 @@ import { Link } from '@inertiajs/react';
 export const SearchMessage = () => {
     const [focus, setFocus] = useState(false);
     const [cancel, setCancel] = useState(false);
-    const [search, setSearch] = useState('');
+    const [display, setDisplay] = useState(false);
+    const [name, setName] = useState('');
     const [result, setResult] = useState([]);
     useEffect(() => {
-        if (search.trim().length == 0) {
+        if (name.trim().length == 0) {
             setCancel(false);
+            setDisplay(false);
         }
-    }, [search]);
+    }, [name]);
 
-    const sendSearch = () => {
-        axios.get(`/search/${search}`)
+    useEffect(() => {
+        axios.get(`/search/${name}`)
             .then((response) => {
-                setResult(response.data.search.data);
-                // setResult("lol")
+                setResult(response.data.data);
+                setDisplay(true);
             }).catch((error) => {
-                console.log(error);
+                // console.log(error);
             })
-    }
-    const onKeyPress = (e) => {
-        if (e.which === 13) {
-            sendSearch();
-            e.preventDefault();
-        }
-    }
-
-    console.log(result)
+    }, [name])
     return (
         <div className='search-wrap'>
             <div className='search-input'>
                 <FontAwesomeIcon icon={faMagnifyingGlass} className='search-icon' id={focus ? 'search-color' : null} />
-                <FontAwesomeIcon icon={faXmarkCircle} className='cancel-icon' id={cancel ? 'display-cancel' : 'hide-cancel'} />
-                <input type="text" className='search' name="search" onChange={event => setSearch(event.target.value)} onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} onInput={() => setCancel(true)} placeholder="Search" onKeyDown={onKeyPress} />
+                <FontAwesomeIcon icon={faXmarkCircle} className='cancel-icon' id={cancel ? 'display-cancel' : 'hide-cancel'} onClick={() => setName("")} />
+                <input type="text" className='search' name="name" onChange={event => setName(event.target.value)} onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} onInput={() => setCancel(true)} placeholder="Search" />
             </div>
-
-            <div className='result-wrap'>
-                {result.map((item, index) => (
-                    <Link href={`/profile/${item.id}`} className='links'>
-                        <div className='result' key={index}>
-                            <div className='result-list'>
-                                <div className='result-image'><img src={item.image ? '/storage/'+item.image : '/storage/profile/blank.svg'} alt="" className='rounded-circle' /></div>
-                                <div className='result-name'><span style={{ fontWeight: '600', marginRight: '0.5vw' }}>{item.user.name}
-                                </span>@{item.username}</div>
+            {display &&
+                <div className='show-result'>
+                    {result.map((item, index) => (
+                        <Link href={`/profile/${item.id}`} className='links'>
+                            <div className='result' key={index}>
+                                <div className='result-list'>
+                                    <div className='result-image'><img src={item.image ? '/storage/' + item.image : '/storage/profile/blank.svg'} alt="" className='rounded-circle' /></div>
+                                    <div className='result-name'><span style={{ fontWeight: '600', marginRight: '0.5vw' }}>{item.user.name}
+                                    </span><span className='result-handle'>@{item.username}</span></div>
+                                </div>
                             </div>
-                        </div>
-                    </Link>
-                ))}
-            </div>
+                        </Link>
+                    ))}
+                </div>
+            }
         </div>
     )
 }

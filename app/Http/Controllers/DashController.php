@@ -13,6 +13,10 @@ class DashController extends Controller
         $this->middleware('auth');
     }
 
+    public function index()
+    {
+        return Inertia::render('Notification');
+    }
     public function show($user)
     {
         $auth_profile = User::with(['profile.followers','following','comments','posts.unlike','like'])

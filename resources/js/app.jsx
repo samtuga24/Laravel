@@ -25,4 +25,6 @@ createInertiaApp({
 window.Echo.private(`messanger.1.2`)
     .listen('MessageSent', (e) => {
         console.log(e);
-    });
+    })
+
+

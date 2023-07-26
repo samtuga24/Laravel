@@ -10,7 +10,8 @@ class LikeController extends Controller
 {
     public function store(Post $post)
     {
-        return auth()->user()->unlike()->toggle($post);
+        // dd(auth()->user()->unlike()->toggle($post));
+        return auth()->user()->like()->toggle($post);
         // return $post;
     }
 }

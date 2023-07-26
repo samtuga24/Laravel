@@ -2,15 +2,26 @@ import React, { useState } from 'react'
 import { faAnglesUp, faAnglesDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link, usePage } from '@inertiajs/react';
+import { useEffect } from 'react';
+import axios from 'axios';
 export const Message = (props) => {
     const auth = usePage().props;
-    console.log("message", auth.auth.user.following)
-    // let following = props.following
-    let profile = props.profile
-    // console.log("profile-message", profile[0].followers)
-    // let followers = props.followers
-    // let authUser = props.auth
-    // let authFollowers = props.authFollowers
+    console.log("message", auth)
+    const [auth_following, setFollowing] = useState([]);
+    const [auth_followers, setFollowers] = useState([]);
+    useEffect(() => {
+        axios.get('/nav')
+            .then((response) => {
+                setFollowing(response.data[0].user.following)
+                setFollowers(response.data[0].followers)
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }, [])
+
+    console.log("auth_following", auth_following)
+    console.log("auth_following", auth_followers)
     const [message, setMessage] = useState(true);
     const [messageUp, setMessageUp] = useState(false);
     const clickUp = () => {
@@ -22,15 +33,14 @@ export const Message = (props) => {
         setMessageUp(false)
     }
 
-    // const checkFollowers = []
-    // auth.auth.user.following.map((following, i) => {
-    //     profile[0].followers.map((followers, i) => {
-    //         if ((following.id === followers.id)) {
-    //             checkFollowers.push(following);
-    //         }
-    //     })
-    // })
-    // console.log("check",checkFollowers)
+    let follow_match = []
+    auth_following.map((following, index) => {
+        auth_followers.map((followers, index) => {
+            if (following.user_id === followers.id) {
+                follow_match.push(following)
+            }
+        })
+    })
 
     return (
         <>
@@ -50,16 +60,16 @@ export const Message = (props) => {
                         <div className='icon-wrap'><FontAwesomeIcon icon={faAnglesDown} className='icon-angle' /></div>
                     </div>
                     <div style={{ marginTop: '8vh' }}>
-                        {/* {checkFollowers.map((index, i) => (
+                        {follow_match.map((index, i) => (
                         <Link href={`/messages/${index.id}`} className='links'>
-                        <div>
+                        <div key={index}>
                             <div className='message-list' onClick={() => console.log("index")}>
                                 <div className='list-image'><img src={index.image?"/storage/"+index.image :"/storage/profile/blank.svg"} alt="" className='rounded-circle' /></div>
                                 <div className='list-name'><span style={{ fontWeight: '600', marginRight: '0.5vw' }}>{index.name}</span>{index.username}</div>
                             </div>
                         </div>
                         </Link>
-                        ))} */}
+                        ))}
                     </div>
                 </div>
             }

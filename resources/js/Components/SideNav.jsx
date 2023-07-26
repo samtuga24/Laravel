@@ -31,9 +31,6 @@ export const SideNav = (props) => {
             .catch((error) => console.log(error))
     }, [])
 
-    console.log(user_profile)
-    console.log(details)
-
     const homeClick = () => {
         setHome(true)
         setProfile(false)
@@ -75,9 +72,9 @@ export const SideNav = (props) => {
     }
 
     let followEach = [];
-    followers.map((follower_item,index)=>{
-        following.map((following_item, item)=>{
-            if(follower_item.id===following_item.user_id){
+    followers.map((follower_item, index) => {
+        following.map((following_item, item) => {
+            if (follower_item.id === following_item.user_id) {
                 followEach.push(follower_item);
             }
         })
@@ -86,7 +83,7 @@ export const SideNav = (props) => {
     return (
         <div className='side-nav-wrap'>
             <div className='nav-user-profile'>
-                <div className='nav-profile-image'><img src={(user_profile.image)? "/storage/"+user_profile.image : "/storage/profile/blank.svg"} alt="" className='rounded-circle' /></div>
+                <div className='nav-profile-image'><img src={(user_profile.image) ? "/storage/" + user_profile.image : "/storage/profile/blank.svg"} alt="" className='rounded-circle' /></div>
                 <div className='nav-profile-name'>{user_profile.name}</div>
                 <div className='nav-profile-handle'>@{user_profile.username}</div>
                 <div className='nav-profile-following'>
@@ -101,7 +98,9 @@ export const SideNav = (props) => {
             <div className='side-wrap'>
                 <Link href='/dashboard' className='links'><div className='side-nav-list' onClick={homeClick} id={home ? 'nav-color' : null}><FontAwesomeIcon icon={faHome} /><span className='nav-label'>Home</span></div></Link>
                 <Link href={`/profile/${details.id}`} className='links'><div className='side-nav-list' onClick={profileClick} id={profile ? 'nav-color' : null}><FontAwesomeIcon icon={faUser} /><span className='nav-label'>Profile</span></div></Link>
-                <div className='side-nav-list' onClick={notificationClick} id={notification ? 'nav-color' : null}><FontAwesomeIcon icon={faBell} /><span className='nav-label'>Notification</span></div>
+                <Link href='/notification' className='links'>
+                    <div className='side-nav-list' onClick={notificationClick} id={notification ? 'nav-color' : null}><FontAwesomeIcon icon={faBell} /><span className='nav-label'>Notification</span></div>
+                </Link>
                 <Link href={route('profile.edit')} className='links'>
                     <div className='side-nav-list' onClick={settingsClick} id={setting ? 'nav-color' : null}><FontAwesomeIcon icon={faGear} /><span className='nav-label'>Setting and privacy</span></div>
                 </Link>
@@ -109,7 +108,7 @@ export const SideNav = (props) => {
                     <div className='side-nav-list'><FontAwesomeIcon icon={faRightFromBracket} /><span className='nav-label'>Logout</span></div>
                 </Link>
             </div>
-            <Message/>
+            {/* <Message/> */}
         </div>
     )
 }

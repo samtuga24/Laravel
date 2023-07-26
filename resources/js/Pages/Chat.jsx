@@ -16,12 +16,10 @@ export default function Chat({ receiver_id, profile }) {
     const areaRef = useRef();
     const imageRef = useRef();
     let user = usePage().props
-    console.log(user.auth.user.id)
     const [message, setMessage] = useState('');
     const [emoji, setEmoji] = useState(false);
     const [keyUp, setKeyUp] = useState(false);
     const [load, setLoad] = useState([]);
-    console.log("load profile", receiver_id)
     useEffect(() => {
         axios.get(`/load/${user.auth.user.id}/${receiver_id}`)
             .then((response) => setLoad(response.data))
@@ -57,7 +55,6 @@ export default function Chat({ receiver_id, profile }) {
 
     let formData = new FormData();
     formData.append('message', message);
-    console.log("load response", load)
     const sendMessage = () => {
         axios.post(`/messages/post/${receiver_id}`, formData, {
             headers: {
@@ -83,7 +80,6 @@ export default function Chat({ receiver_id, profile }) {
     return (
         <div className='dash-wrap'>
             <div className='side-nav'><SideNav /></div>
-            <div className='header'>Messages</div>
             <div className='home'>
                 <div className='chat-body'>
                     <div className='chat-header'>

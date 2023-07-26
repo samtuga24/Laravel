@@ -34,13 +34,16 @@ class ProfileController extends Controller
     }
     public function index()
     {
-        $user = Profile::where('user_id',request()->user()->id)->get();
+        $user = Profile::with('user.following','followers')->where('user_id',request()->user()->id)->get();
         return $user;
     }
     public function search($name)
     {
-        $search = Profile::with('user')->where('username','like', '%'. $name. '%')->paginate(20);
-        return(['search'=>$search]);
+        $search = Profile::with('user')
+                    ->where('username','like', '%'. $name. '%')
+                    ->orWhere('name','like','%'.$name.'%')
+                    ->paginate(20);
+        return $search;
     }
      public function show(User $user): Response
      {

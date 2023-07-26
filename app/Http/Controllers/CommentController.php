@@ -16,7 +16,7 @@ class CommentController extends Controller
     }
     public function show($id)
     {
-        $post = Post::with(['user','unlike'])->where('id', '=', $id)->get();
+        $post = Post::with(['user.profile','unlike', 'comments'])->where('id', '=', $id)->get();
         return Inertia::render('CommentView',['post'=>$post]);
     }
 

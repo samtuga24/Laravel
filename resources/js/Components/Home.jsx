@@ -17,27 +17,39 @@ export const Home = (props) => {
     const [content, setContent] = useState('');
     const [image, setImage] = useState([]);
     const [posts, setPosts] = useState([]);
+    const [post_id, setPostId] = useState();
     const [like, setLike] = useState(false);
+    const [like_action, setLikeAction] = useState([]);
     const postRef = useRef();
     const areaRef = useRef();
     const auth_user = usePage().props.auth;
 
-    useEffect(()=>{
+    useEffect(() => {
         axios.get(`/dashboard/${auth_user.user.id}`)
-        .then((response)=>{
-            setHome(response.data[0])
-        })
-        .catch((error)=>console.log(error))
-    },[])
+            .then((response) => {
+                setHome(response.data[0])
+            })
+            .catch((error) => console.log(error))
+    }, [])
 
-    useEffect(()=>{
+    useEffect(() => {
         axios.get("/following")
-        .then((response)=>{
-            setPosts(response.data)
+            .then((response) => {
+                setPosts(response.data)
+                setLikeAction(response.data[0].unlike)
+            })
+            .catch((error) => console.log(error))
+    }, [])
+
+    useEffect(() => {
+        like_action.map((item, index) => {
+            if (auth_user.user.id == item.id) {
+                setLike(true);
+                console.log('true')
+            }
         })
-        .catch((error)=>console.log(error))
-    },[])
-    // console.log('posts', posts)
+    }, [])
+
 
     useEffect(() => {
         if (postRef && postRef.current) {
@@ -106,17 +118,19 @@ export const Home = (props) => {
 
     const clickComment = (e) => {
         e.preventDefault()
-        alert("comment")
+
     }
 
     const submitLike = (id) => {
         // e.preventDefault();
+        // console.log("post-id",id)
         axios.post(`/like/${id}`)
             .then((response) => console.log("home response", response.data))
             .catch((error) => console.log(error))
         setLike(!like);
     }
-    // console.log(auth)
+
+
     return (
         <div className='home-wrap'>
             <div className='header'>Home</div>
@@ -147,7 +161,8 @@ export const Home = (props) => {
                 </div>
             </div>
             {posts.map((item, index) => (
-                <Link href={`/comment/${item.id}`} className='links'>
+
+                <Link href={`/comment/show/${item.id}`} className='links'>
                     <div className='post-body' key={index}>
                         <div className='post-header'>
                             <Link href={`/profile/${item.user.id}`} className='links'><img src={item.user.profile.image ? '/storage/' + item.user.profile.image : '/storage/profile/blank.svg'} alt="" className='post-profile-image' /></Link>
@@ -157,10 +172,9 @@ export const Home = (props) => {
                         <div className='post-content'>
                             {item.content && <p className='user-post-content'>{item.content}</p>}
                             {item.image && <img src={`/storage/${item.image}`} alt="" />}
-
                             <div className='post-comments'>
                                 <div className='comment-wrap'><div className='comment-hover' onClick={clickComment}><FontAwesomeIcon icon={faComment} className='comment-icon' /></div>{item.comments.length}</div>
-                                <div className='like-wrap'><div className='like-hover' onClick={() => submitLike(item.id)}><FontAwesomeIcon icon={like ? SolidHeart : faHeart} beat={like ? true : false} className='comment-icon' id={like ? 'click-color' : null} /></div>{item.unlike.length}</div>
+                                <div className='like-wrap'><div className='like-hover' onClick={()=>submitLike(item.id)}><FontAwesomeIcon icon={like ? SolidHeart : faHeart} beat={like ? true : false} className='comment-icon' id={like ? 'click-color' : null} /></div>{item.unlike.length}</div>
                             </div>
                         </div>
                     </div>

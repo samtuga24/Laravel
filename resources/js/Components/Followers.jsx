@@ -55,7 +55,7 @@ export const Followers = (props) => {
                                     <span className='following-bio'>{item.bio}</span>
                                 </div>
                             </div>
-                            <button className='following-button' id={hover ? 'hover-color' : null} onMouseMove={() => setHover(true)} onMouseLeave={() => setHover(false)}>{hover ? 'Unfollow' : 'Following'}</button>
+                            <button className='following-button' id={hover ? 'hover-color' : null} onMouseOver={() => setHover(true)} onMouseLeave={() => setHover(false)}>{hover ? 'Unfollow' : 'Following'}</button>
                         </div>
                     ))}
 

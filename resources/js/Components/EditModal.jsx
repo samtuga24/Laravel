@@ -27,48 +27,19 @@ export const EditModal = (props) => {
     const [header_display, setHeaderDisplay] = useState(auth.profile[0].header);
     const [image_display, setImageDisplay] = useState(auth.profile[0].image);
 
-    // const [webcount, setWebcount] = useState(0);
     const [locationcount, setLocationcount] = useState(0);
     const [biocount, setBiocount] = useState(0);
-
-    console.log("this is the passed data")
-
     const [form, setForm] = useState({
         name: auth.profile[0].name,
         bio: auth.profile[0].bio ?? "",
         location: auth.profile[0].location ?? "",
         website: auth.profile[0].website ?? "",
     })
-    console.log("website",form.website)
-
-    // let name_length
-    // useEffect(() => {
-    //     if (form.name.trim().length < 1) {
-    //         name_length = false
-    //     } else {
-    //         name_length = true
-    //     }
-    // }, [form.name])
-
-    console.log("check-image", auth.profile[0]?.header)
-
-    console.log('edit', auth.profile[0].username)
     const removeHeader = () => {
         setRemove(true);
         setShow(false);
         setHeaderUrl(null);
     }
-
-    console.log(show)
-
-    // useEffect(() => {
-    //     setLocationcount(form.location.length);
-    // }, [form.location]);
-
-    // useEffect(() => {
-    //     setBiocount(form.bio.length);
-    // }, [form.bio]);
-
     const onUpdateForm = e => {
         const newFormState = {
             ...form,
@@ -139,7 +110,6 @@ export const EditModal = (props) => {
             console.log("edit-profile", response.data)
         }).catch((error) => {
             setError(error.response.data.errors)
-            // console.log(error.response.data.errors)
         })
     }
 

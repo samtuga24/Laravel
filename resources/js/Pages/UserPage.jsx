@@ -8,15 +8,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { EditModal } from '../Components/EditModal';
 import React, { useState } from 'react'
 import { Head, Link, usePage } from '@inertiajs/react';
-import { UserProfile } from '@/Components/UserProfile';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { isEmpty } from 'lodash';
-export default function UserPage({profile,auth_following}) {
+export default function UserPage({ profile, auth_following }) {
     const auth = usePage().props;
-    console.log('auth',auth)
-    console.log('profile',profile[0])
-    console.log('auth_following',auth_following)
     const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let joined = new Date(profile[0].created_at);
     let monthJoined = month[joined.getMonth()]
@@ -29,7 +25,6 @@ export default function UserPage({profile,auth_following}) {
     const [comment, setComment] = useState(false)
     let matchFollowing
     auth_following.map((item, index) => {
-        console.log("item-id",item.id)
         if (profile[0].user_id == item.id) {
             matchFollowing = true
         }
@@ -37,7 +32,6 @@ export default function UserPage({profile,auth_following}) {
             matchFollowing = false
         }
     })
-    console.log(matchFollowing)
     const [toggle, setToggle] = useState(matchFollowing);
 
     const clickPost = () => {
@@ -65,6 +59,7 @@ export default function UserPage({profile,auth_following}) {
         setComment(true)
     }
     const submitFollow = (e) => {
+        setToggle(!toggle)
         e.preventDefault();
         axios.post(`/follow/${profile[0].id}`).then((response) => {
             console.log("response", response.data)
@@ -73,7 +68,14 @@ export default function UserPage({profile,auth_following}) {
         }).catch((error) => {
             console.log(error)
         })
-
+        if (!toggle) {
+            axios.post(`/notify/post/${profile[0].id}/followed you.`)
+                .then((response) => {
+                    console.log(response)
+                }).catch((error) => {
+                    console.log(error)
+                })
+        }
     }
     const calcTime = (time) => {
         const current = new Date();
@@ -134,7 +136,9 @@ export default function UserPage({profile,auth_following}) {
                         </div>
                         :
                         <div className='edit-button'>
-                            <button className='edit-profile' onClick={submitFollow}>{toggle ? 'Following ' : 'Follow'}</button>
+                            <Link href={`/notify/post/${profile[0].user.id}`} className='links'>
+                                <button className='edit-profile' onClick={submitFollow}>{toggle ? 'Following ' : 'Follow'}</button>
+                            </Link>
                         </div>
                     }
                     {<EditModal
