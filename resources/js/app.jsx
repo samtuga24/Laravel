@@ -7,6 +7,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { BrowserRouter } from 'react-router-dom';
 import Echo from 'laravel-echo';
+import { ProfileProvider } from './context/ProfileContext';
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
@@ -15,7 +16,7 @@ createInertiaApp({
     resolve: (name) => resolvePageComponent(`./Pages/${name}.jsx`, import.meta.glob('./Pages/**/*.jsx')),
     setup({ el, App, props }) {
         const root = createRoot(el);
-        root.render(<App {...props} />);
+        root.render(<ProfileProvider><App {...props} /></ProfileProvider>);
     },
     progress: {
         color: '#1DA1F2',

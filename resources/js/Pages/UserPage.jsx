@@ -11,7 +11,12 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { isEmpty } from 'lodash';
+import { useContext } from 'react';
+import ProfileContext from '@/context/ProfileContext';
 export default function UserPage({ profile, auth_following }) {
+    const {receiver,setReceiver} = useContext(ProfileContext);
+    setReceiver(profile[0])
+    console.log("receiver",receiver)
     const auth = usePage().props;
     const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let joined = new Date(profile[0].created_at);
@@ -136,9 +141,7 @@ export default function UserPage({ profile, auth_following }) {
                         </div>
                         :
                         <div className='edit-button'>
-                            <Link href={`/notify/post/${profile[0].user.id}`} className='links'>
-                                <button className='edit-profile' onClick={submitFollow}>{toggle ? 'Following ' : 'Follow'}</button>
-                            </Link>
+                            <button className='edit-profile' onClick={submitFollow}>{toggle ? 'Following ' : 'Follow'}</button>
                         </div>
                     }
                     {<EditModal

@@ -8,6 +8,7 @@ import { isUndefined, set } from 'lodash';
 import { Link, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 import axios from 'axios';
+import { CommentModal } from './CommentModal';
 export const Home = (props) => {
     const [home, setHome] = useState([]);
     const [emoji, setEmoji] = useState(false);
@@ -18,11 +19,13 @@ export const Home = (props) => {
     const [image, setImage] = useState([]);
     const [posts, setPosts] = useState([]);
     const [post_id, setPostId] = useState();
+    const [modal_post, setModalPost] = useState();
     const [like, setLike] = useState(false);
     const [like_action, setLikeAction] = useState([]);
     const postRef = useRef();
     const areaRef = useRef();
     const auth_user = usePage().props.auth;
+    const [modalShow, setModalShow] = useState(false);
 
     useEffect(() => {
         axios.get(`/dashboard/${auth_user.user.id}`)
@@ -36,11 +39,12 @@ export const Home = (props) => {
         axios.get("/following")
             .then((response) => {
                 setPosts(response.data)
-                setLikeAction(response.data[0].unlike)
+                // setLikeAction(response.data[0].unlike)
             })
             .catch((error) => console.log(error))
     }, [])
 
+    console.log("following-posts", posts)
     useEffect(() => {
         like_action.map((item, index) => {
             if (auth_user.user.id == item.id) {
@@ -116,14 +120,23 @@ export const Home = (props) => {
         }
     }
 
-    const clickComment = (e) => {
-        e.preventDefault()
-
+    const clickPost = (id) =>{
+        axios.get(`/comment/show/${id}`)
+        .then((response)=>{
+            console.log(response)
+        }).catch((error)=>{
+            console.log(error)
+        })
     }
+    const clickComment = (event,modal) => {
+        event.preventDefault()
+        setModalShow(true)
+        setModalPost(modal)
+    }
+    console.log(modal_post)
 
-    const submitLike = (id) => {
-        // e.preventDefault();
-        // console.log("post-id",id)
+    const submitLike = (event,id) => {
+        event.preventDefault();
         axios.post(`/like/${id}`)
             .then((response) => console.log("home response", response.data))
             .catch((error) => console.log(error))
@@ -163,7 +176,7 @@ export const Home = (props) => {
             {posts.map((item, index) => (
 
                 <Link href={`/comment/show/${item.id}`} className='links'>
-                    <div className='post-body' key={index}>
+                    <div className='post-body' key={index} onClick={()=>clickPost(item.id)}>
                         <div className='post-header'>
                             <Link href={`/profile/${item.user.id}`} className='links'><img src={item.user.profile.image ? '/storage/' + item.user.profile.image : '/storage/profile/blank.svg'} alt="" className='post-profile-image' /></Link>
                             <div className='post-username-wrap'><Link href={`/profile/${item.user.id}`} className='links'><span className='post-username'>{item.user.name}</span></Link>@{item.user.profile.username}<span className='post-time'><FontAwesomeIcon icon={faCircle} className='circle' />{calcTime(item.created_at)}</span></div>
@@ -173,13 +186,19 @@ export const Home = (props) => {
                             {item.content && <p className='user-post-content'>{item.content}</p>}
                             {item.image && <img src={`/storage/${item.image}`} alt="" />}
                             <div className='post-comments'>
-                                <div className='comment-wrap'><div className='comment-hover' onClick={clickComment}><FontAwesomeIcon icon={faComment} className='comment-icon' /></div>{item.comments.length}</div>
-                                <div className='like-wrap'><div className='like-hover' onClick={()=>submitLike(item.id)}><FontAwesomeIcon icon={like ? SolidHeart : faHeart} beat={like ? true : false} className='comment-icon' id={like ? 'click-color' : null} /></div>{item.unlike.length}</div>
+                                <div className='comment-wrap'><div className='comment-hover' onClick={(event)=>clickComment(event,item)}><FontAwesomeIcon icon={faComment} className='comment-icon' /></div>{item.comments.length}</div>
+                                <div className='like-wrap'><div className='like-hover' onClick={(event) => submitLike(event,item.id)}><FontAwesomeIcon icon={like ? SolidHeart : faHeart} beat={like ? true : false} className='comment-icon' id={like ? 'click-color' : null} /></div>{item.unlike.length}</div>
                             </div>
                         </div>
                     </div>
                 </Link>
             ))}
+
+            {<CommentModal
+                show={modalShow}
+                onHide={() => setModalShow(false)}
+                post={modal_post}
+            />}
         </div>
     )
 }

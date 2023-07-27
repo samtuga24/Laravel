@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use \App\Events\NotificationSent;
+use App\Models\Notification;
 use App\Models\User;
 use App\Repositories\NotificationRepository;
 use Illuminate\Http\Request;
@@ -17,10 +18,12 @@ class NotificationController extends Controller
 
     public function show(User $user)
     {
-        // return Inertia::render('Chat',[
-        //     "receiver_id"=>$user->id,
-        //     "profile"=>$user->profile,
-        // ]);
+        $notify = Notification::where('receiver_id', '=', $user->id)->latest()->get();
+        $userId = $notify->pluck('sender_id');
+
+        $sender = User::with('profile')->whereIn('id',$userId)->latest()->get();
+
+        return ['sender'=>$sender,'notify'=>$notify];
     }
 
     public function store($id,$content)

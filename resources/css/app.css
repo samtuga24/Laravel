@@ -465,6 +465,14 @@ body{
     cursor: pointer;
     padding-top: 2vh;
   }
+  .modal-post-body{
+    height: auto;
+    padding-left: 1vw;
+    padding-right: 1vw;
+    padding-bottom: 1vh;
+    cursor: pointer;
+    padding-top: 2vh;
+  }
   .comment-body{
 
     height: auto;
@@ -1022,11 +1030,20 @@ textarea:focus {
   background-color: transparent;
   border-radius: 1vw;
   overflow-y: scroll;
-  /* padding-top: 20vh; */
   position: relative;
   height: auto;
   padding-left: 0vw !important;
 
+}
+.comment-wrap{
+  max-width: 48% !important;
+  min-height: 0;
+  background-color: transparent;
+  border-radius: 1vw;
+  overflow-y: scroll;
+  position: relative;
+  height: auto;
+  padding-left: 0vw !important;
 }
 .modal-header{
   border: transparent;
@@ -1664,6 +1681,9 @@ margin-right: 3vw;
   margin-left: 5.1vw;
   font-size: 1.3vw;
   color: #868585;
+}
+.comment-modal-body{
+  border: 1px solid red;
 }
 
 
