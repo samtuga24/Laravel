@@ -16,7 +16,7 @@ class CommentController extends Controller
     }
     public function show($id)
     {
-        $post = Post::with(['user.profile','unlike', 'comments'])->where('id', '=', $id)->get();
+        $post = Post::with(['user.profile','unlike', 'comments.user.profile','comments.replies'])->where('id', '=', $id)->get();
         return Inertia::render('CommentView',['post'=>$post]);
     }
 
@@ -28,12 +28,12 @@ class CommentController extends Controller
         ]);
         $imagePath = request('image') ? request('image')->store('comments','public') : ' ';
         $comment = request('comment') ? request('comment') : ' ';
-        Comment::create([
+       return Comment::create([
             'user_id'=>auth()->user()->id,
             'post_id'=>$id,
+            'comment_id'=>null,
             'comment'=>$comment,
             'image'=>$imagePath,
         ]);
-        return Redirect::to('/dashboard');
     }
 }

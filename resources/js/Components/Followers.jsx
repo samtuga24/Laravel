@@ -7,9 +7,9 @@ export const Followers = (props) => {
     let user = props.user
     let following = props.following
     let followers = props.followers
-    console.log("user", user)
-    console.log("followers", followers)
-    console.log("following", following)
+    // console.log("user", user)
+    // console.log("followers", followers)
+    // console.log("following", following)
     const [followingTab, setFollowingTab] = useState(true)
     const [followersTab, setFollowersTab] = useState(false)
     const [hover, setHover] = useState(false)
@@ -20,6 +20,12 @@ export const Followers = (props) => {
     const clickFollowersTab = () => {
         setFollowingTab(false)
         setFollowersTab(true)
+    }
+     const mouseover = () =>{
+        setHover(true)
+    }
+    const mouseleave = () =>{
+        setHover(!hover)
     }
     return (
         <div className='followers-wrap'>
@@ -55,7 +61,9 @@ export const Followers = (props) => {
                                     <span className='following-bio'>{item.bio}</span>
                                 </div>
                             </div>
-                            <button className='following-button' id={hover ? 'hover-color' : null} onMouseOver={() => setHover(true)} onMouseLeave={() => setHover(false)}>{hover ? 'Unfollow' : 'Following'}</button>
+                            <button className='following-button' id={hover ? 'hover-color' : null}
+                                onClick={() => alert(index)} onMouseOver={mouseover}
+                                onMouseLeave={mouseleave}>{hover ? 'Unfollow' : 'Following'}</button>
                         </div>
                     ))}
 

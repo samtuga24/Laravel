@@ -14,8 +14,13 @@ import { isEmpty } from 'lodash';
 import { useContext } from 'react';
 import ProfileContext from '@/context/ProfileContext';
 export default function UserPage({ profile, auth_following }) {
-    const {receiver,setReceiver} = useContext(ProfileContext);
+    const {receiver,setReceiver, dash, setDash, auth_profile, setProfile, notification, setNotification, setting, setSetting} = useContext(ProfileContext);
     setReceiver(profile[0])
+    setDash(false)
+    setProfile(true)
+    setNotification(false);
+    setSetting(false)
+
     console.log("receiver",receiver)
     const auth = usePage().props;
     const month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];

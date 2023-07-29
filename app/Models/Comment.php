@@ -19,4 +19,14 @@ class Comment extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function replies()
+    {
+        return $this->hasMany(Comment::class)->with('comments');
+    }
 }

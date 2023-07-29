@@ -4,12 +4,20 @@ import UserPage from "@/Pages/UserPage";
 import { Children } from "react";
 import { createContext, useState } from "react";
 const ProfileContext = createContext();
-export function ProfileProvider({children}){
+const NavContext = createContext();
+export function ProfileProvider({ children }) {
     const [receiver, setReceiver] = useState([]);
-    return(
-        <ProfileContext.Provider value={{ receiver, setReceiver }}>
-            {children}
-        </ProfileContext.Provider>
+    const [dash, setDash] = useState(true);
+    const [auth_profile, setProfile] = useState(false);
+    const [notification, setNotification] = useState(false);
+    const [setting, setSetting] = useState(false);
+    return (
+        <>
+            <ProfileContext.Provider value={{ receiver, setReceiver, dash, setDash, auth_profile, setProfile, notification, setNotification, setting, setSetting }}>
+                {children}
+            </ProfileContext.Provider>
+        </>
+
     )
 }
 export default ProfileContext;

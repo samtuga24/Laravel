@@ -6,6 +6,8 @@ import { Link, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { Message } from './Message';
+import { useContext } from 'react';
+import ProfileContext from '@/context/ProfileContext';
 export const SideNav = (props) => {
     const auth_user = usePage().props.auth;
     const [details, setDetails] = useState([]);
@@ -13,12 +15,7 @@ export const SideNav = (props) => {
     const [following, setFollowing] = useState([]);
     const [followers, setFollowers] = useState([]);
     const [userProfile, setUserProfile] = useState({});
-
-    const [home, setHome] = useState(true);
-    const [profile, setProfile] = useState(false);
-    const [message, setMessage] = useState(false);
-    const [notification, setNotification] = useState(false);
-    const [setting, setSetting] = useState(false);
+    const {dash, setDash, auth_profile, setProfile, notification, setNotification, setting, setSetting} = useContext(ProfileContext);
 
     useEffect(() => {
         axios.get(`/dashboard/${auth_user.user.id}`)
@@ -32,41 +29,28 @@ export const SideNav = (props) => {
     }, [])
 
     const homeClick = () => {
-        setHome(true)
+        setDash(true)
         setProfile(false)
-        setMessage(false)
         setNotification(false)
         setSetting(false)
     }
 
     const profileClick = () => {
-        setHome(false)
-        setProfile(true)
-        setMessage(false)
-        setNotification(false)
-        setSetting(false)
-    }
-
-    const messageClick = () => {
-        setHome(false)
+        setDash(false)
         setProfile(false)
-        setMessage(true)
         setNotification(false)
         setSetting(false)
     }
-
     const notificationClick = () => {
-        setHome(false)
+        setDash(false)
         setProfile(false)
-        setMessage(false)
         setNotification(true)
         setSetting(false)
     }
 
     const settingsClick = () => {
-        setHome(false)
+        setDash(false)
         setProfile(false)
-        setMessage(false)
         setNotification(false)
         setSetting(true)
     }
@@ -96,10 +80,14 @@ export const SideNav = (props) => {
                 </div>
             </div>
             <div className='side-wrap'>
-                <Link href='/dashboard' className='links'><div className='side-nav-list' onClick={homeClick} id={home ? 'nav-color' : null}><FontAwesomeIcon icon={faHome} /><span className='nav-label'>Home</span></div></Link>
-                <Link href={`/profile/${details.id}`} className='links'><div className='side-nav-list' onClick={profileClick} id={profile ? 'nav-color' : null}><FontAwesomeIcon icon={faUser} /><span className='nav-label'>Profile</span></div></Link>
+                <Link href='/dashboard' className='links'><div className='side-nav-list' onClick={homeClick} id={dash ? 'nav-color' : null}><FontAwesomeIcon icon={faHome} /><span className='nav-label'>Home</span></div></Link>
+                <Link href={`/profile/${details.id}`} className='links'><div className='side-nav-list' onClick={profileClick} id={auth_profile ? 'nav-color' : null}><FontAwesomeIcon icon={faUser} /><span className='nav-label'>Profile</span></div></Link>
                 <Link href='/notification' className='links'>
-                    <div className='side-nav-list' onClick={notificationClick} id={notification ? 'nav-color' : null}><FontAwesomeIcon icon={faBell} /><span className='nav-label'>Notification</span></div>
+                    <div className='side-nav-list' onClick={notificationClick} id={notification ? 'nav-color' : null}>
+                        <FontAwesomeIcon icon={faBell} />
+                        <span className='nav-label'>Notification</span>
+                        <span className='notification-count'>3</span>
+                    </div>
                 </Link>
                 <Link href={route('profile.edit')} className='links'>
                     <div className='side-nav-list' onClick={settingsClick} id={setting ? 'nav-color' : null}><FontAwesomeIcon icon={faGear} /><span className='nav-label'>Setting and privacy</span></div>
@@ -108,7 +96,6 @@ export const SideNav = (props) => {
                     <div className='side-nav-list'><FontAwesomeIcon icon={faRightFromBracket} /><span className='nav-label'>Logout</span></div>
                 </Link>
             </div>
-            {/* <Message/> */}
         </div>
     )
 }

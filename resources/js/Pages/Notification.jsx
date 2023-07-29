@@ -12,12 +12,13 @@ import { useContext } from "react";
 import { useEffect } from "react";
 export default function Notification(props) {
     const user = usePage().props
-    const { receiver, setReceiver } = useContext(ProfileContext)
     const [sender, setSender] = useState([]);
     const [content, setContent] = useState([]);
-    const [notification, setNotification] = useState([]);
-    console.log("notification-receiver", receiver.id)
-    console.log("notification-receiver", user.auth.user.id)
+    const {dash, setDash, auth_profile, setProfile, notification, setNotification, setting, setSetting} = useContext(ProfileContext);
+    setDash(false)
+    setProfile(false)
+    setNotification(true);
+    setSetting(false)
 
     useEffect(() => {
         axios.get(`/notify/load/${user.auth.user.id}`)

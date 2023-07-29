@@ -49,13 +49,13 @@ Route::get('dashboard/{user}',[DashController::class,'show']);
 //     return Inertia::render('MessageView');
 // })->middleware(['auth', 'verified'])->name('message');
 
-Route::get('/messages/{user}', [MessageController::class, 'index']);
+Route::get('/messages/{user}', [MessageController::class, 'index'])->middleware('auth');
 Route::get('/follow-status/{user}', [ProfileController::class, 'status']);
-Route::get('/load/{user}/{id}', [ChatRepository::class, 'show']);
+Route::get('/load/{user}/{id}', [ChatRepository::class, 'show'])->middleware('auth');
 // Route::get('/notify/{user}/{id}', [NotificationRepository::class, 'show']);
 Route::get('/notify/load/{user}', [NotificationController::class, 'show']);
 Route::get('/nav', [ProfileController::class, 'index']);
-Route::post('/messages/post/{id}', [MessageController::class, 'store']);
+Route::post('/messages/post/{id}', [MessageController::class, 'store'])->middleware('auth');
 Route::get('/notification', [DashController::class, 'index']);
 Route::post('/notify/post/{id}/{content}', [NotificationController::class, 'store']);
 Route::post('/post', [PostController::class, 'store']);

@@ -23,11 +23,11 @@ export default function Comments(props) {
     const areaRef = useRef();
     console.log(post_comment)
     useEffect(() => {
+        // console.log(imageRef.current.style.clientHeight)
         if (postRef && postRef.current) {
             postRef.current.style.height = "0px";
             const taHeight = postRef.current.scrollHeight;
             postRef.current.style.height = taHeight + "px";
-            areaRef.current.style.height = taHeight + "px";
         }
     }, [comment])
 
@@ -68,7 +68,6 @@ export default function Comments(props) {
     }
 
     const clickClose = () => {
-        setClose(true)
         setImage(null)
         setDisplay(false)
     }
@@ -86,6 +85,7 @@ export default function Comments(props) {
         setContent(prevPost => prevPost + event.emoji);
     }
 
+    console.log(post[0])
 
     return (
             <div className='comment-body'>
@@ -95,8 +95,8 @@ export default function Comments(props) {
                     <div className='action-wrap'><FontAwesomeIcon icon={faEllipsis} className='post-action' /></div>
                 </div>
                 <div className='post-comment-comment'>
-                    {post[0].content && <p className='user-post-comment'>{post[0].content}</p>}
-                    {post[0].image && <img src={"/storage/" + post[0].image} alt="" />}
+                    {post[0]?.content && <p className='user-post-comment'>{post[0].content}</p>}
+                    {post[0]?.image && <img src={"/storage/" + post[0].image} alt="" />}
                     <div className='comments'>
                         {date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}<FontAwesomeIcon icon={faCircle} className='seperate-time' />{month[date.getUTCMonth()]} {date.getUTCDate()}, {date.getUTCFullYear()}
                     </div>
@@ -112,32 +112,32 @@ export default function Comments(props) {
                     </div>
                 </div>
 
-                <div className='comment-form'>
-                    <div className='profile-icon'><img src="/storage/profile/blank.svg" alt="" /></div>
-                    <div className='input-form' ref={areaRef}>
-                        <form action={"/comment/" + post[0].id} encType='multipart/form-data' method='post' style={{ position: 'relative' }}>
-                            <textarea name="comment" id="" ref={postRef} value={comment} onChange={updatePost} placeholder="What's up?!" maxLength={200} className='text-area'></textarea>
+                <div className='post-form'>
+                    <form action={`./${post[0]?.id}`} encType='multipart/form-data' method='post' className='home-post-form'>
+                        <div className='profile-icon'><img src={"/storage/profile/blank.svg"} alt="" /></div>
+                        <div className='post-wrap'>
+                            <textarea name="comment" value={comment} ref={postRef} onChange={updatePost} id="" placeholder="What's up?!" className='text-area'></textarea>
+                            <input type="file" name="image" id="" ref={inputRef} accept='image/*' onChange={imageChange} className='image-select' />
                             {display &&
                                 <div className='post-image-display'>
                                     <img src={image} alt="" />
                                     <FontAwesomeIcon icon={faXmarkCircle} className='close-image' onClick={clickClose} />
                                 </div>
                             }
-                            <div className='post-buttons'>
-                                <div className='emoji-button'>
-                                    <input type="file" name="image" id="" ref={inputRef} accept='image/*' onChange={imageChange} className='image-select' />
-                                    <div className='image-icon'><FontAwesomeIcon icon={faImage} onClick={selectFile} /></div>
-                                    <div className='smile-icon'><FontAwesomeIcon icon={faSmile} onClick={clickEmoji} />
-                                        {emoji &&
-                                            <div className='emoji-picker'><EmojiPicker height={400} width="100%" onEmojiClick={onEmojiClick} /></div>
-                                        }
-                                    </div>
+                        </div>
+                        <div className='post-buttons'>
+                            <div className='emoji-button'>
+                                <div className='image-icon'><FontAwesomeIcon icon={faImage} onClick={selectFile} /></div>
+                                <div className='smile-icon'><FontAwesomeIcon icon={faSmile} onClick={clickEmoji} />
+                                    {emoji &&
+                                        <div className='emoji-picker'><EmojiPicker height={400} width="100%" onEmojiClick={onEmojiClick} /></div>
+                                    }
                                 </div>
-                                <div className='post-submit'><Button disabled={display || comment.trim().length > 0 ? false : true} type='submit' className='sub'>post</Button></div>
                             </div>
-                        </form>
-                    </div>
-                </div>
+                            <div className='post-submit'><Button disabled={display || comment.trim().length > 0 ? false : true} type='submit' className='sub'>post</Button></div>
+                        </div>
+                    </form>
+            </div>
 
                 <div className='comment-view'>
                     {post[0].comments.map((item, index) => {
@@ -145,8 +145,8 @@ export default function Comments(props) {
                         return (
                             <div className='post-body'>
                                 <div className='post-header'>
-                                    <Link href="#" className='links'><img src={post[0].user.profile.image ? "/storage/" + post[0].user.profile.image : "/storage/profile/blank.svg"} alt="" className='post-profile-image' /></Link>
-                                    <div className='post-username-wrap'><Link href="#" className='links'><span className='post-username'>{post[0].user.name}</span></Link>@{post[0].user.username}<span className='post-time'><FontAwesomeIcon icon={faCircle} className='circle' />{calcTime(item.created_at)}</span></div>
+                                    <Link href="#" className='links'><img src={item.user.profile.image ? "/storage/" + item.user.profile.image : "/storage/profile/blank.svg"} alt="" className='post-profile-image' /></Link>
+                                    <div className='post-username-wrap'><Link href="#" className='links'><span className='post-username'>{item.user.profile.name}</span></Link>@{item.user.profile.username}<span className='post-time'><FontAwesomeIcon icon={faCircle} className='circle' />{calcTime(item.created_at)}</span></div>
                                     <div className='action-wrap'><FontAwesomeIcon icon={faEllipsis} className='post-action' /></div>
                                 </div>
                                 <div className='post-content'>

@@ -9,6 +9,8 @@ import { Link, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { CommentModal } from './CommentModal';
+import { useContext } from 'react';
+import ProfileContext from '@/context/ProfileContext';
 export const Home = (props) => {
     const [home, setHome] = useState([]);
     const [emoji, setEmoji] = useState(false);
@@ -24,9 +26,21 @@ export const Home = (props) => {
     const [like_action, setLikeAction] = useState([]);
     const postRef = useRef();
     const areaRef = useRef();
+    const formRef = useRef();
+    const buttonsRef = useRef();
+    const imageRef = useRef();
     const auth_user = usePage().props.auth;
     const [modalShow, setModalShow] = useState(false);
+    const {dash, setDash, auth_profile, setProfile, notification, setNotification, setting, setSetting} = useContext(ProfileContext);
+    setDash(true)
+    setProfile(false)
+    setNotification(false);
+    setSetting(false)
 
+    const min = buttonsRef.current?.clientHeight;
+    const max = imageRef.current?.clientHeight;
+    console.log("button-height",min)
+    console.log("image-height",max)
     useEffect(() => {
         axios.get(`/dashboard/${auth_user.user.id}`)
             .then((response) => {
@@ -42,27 +56,20 @@ export const Home = (props) => {
                 // setLikeAction(response.data[0].unlike)
             })
             .catch((error) => console.log(error))
-    }, [])
+    }, [like])
 
-    console.log("following-posts", posts)
-    useEffect(() => {
-        like_action.map((item, index) => {
-            if (auth_user.user.id == item.id) {
-                setLike(true);
-                console.log('true')
-            }
-        })
-    }, [])
+    // console.log(posts[0].unlike[0].id==auth_user.user.id)
 
 
     useEffect(() => {
+        // console.log(imageRef.current.style.clientHeight)
         if (postRef && postRef.current) {
             postRef.current.style.height = "0px";
             const taHeight = postRef.current.scrollHeight;
             postRef.current.style.height = taHeight + "px";
-            areaRef.current.style.height = taHeight + "px";
         }
     }, [content])
+
 
     const clickLike = (e) => {
         e.preventDefault();
@@ -120,22 +127,22 @@ export const Home = (props) => {
         }
     }
 
-    const clickPost = (id) =>{
+    const clickPost = (id) => {
         axios.get(`/comment/show/${id}`)
-        .then((response)=>{
-            console.log(response)
-        }).catch((error)=>{
-            console.log(error)
-        })
+            .then((response) => {
+                console.log(response)
+            }).catch((error) => {
+                console.log(error)
+            })
     }
-    const clickComment = (event,modal) => {
+    const clickComment = (event, modal) => {
         event.preventDefault()
         setModalShow(true)
         setModalPost(modal)
     }
     console.log(modal_post)
 
-    const submitLike = (event,id) => {
+    const submitLike = (event, id) => {
         event.preventDefault();
         axios.post(`/like/${id}`)
             .then((response) => console.log("home response", response.data))
@@ -148,19 +155,20 @@ export const Home = (props) => {
         <div className='home-wrap'>
             <div className='header'>Home</div>
             <div className='post-form'>
-                <div className='profile-icon'><img src={"/storage/profile/blank.svg"} alt="" /></div>
-                <div className='input-form' ref={areaRef}>
-                    <form action="/post" encType='multipart/form-data' method='post' style={{ position: 'relative' }}>
-                        <textarea name="content" ref={postRef} value={content} onChange={updatePost} id="" placeholder="What's up?!" maxLength={200} className='text-area'></textarea>
-                        {display &&
-                            <div className='post-image-display'>
-                                <img src={image} alt="" />
-                                <FontAwesomeIcon icon={faXmarkCircle} className='close-image' onClick={clickClose} />
-                            </div>
-                        }
-                        <div className='post-buttons'>
+                    <form action="/post" encType='multipart/form-data' method='post' className='home-post-form'>
+                        <div className='profile-icon'><img src={"/storage/profile/blank.svg"} alt="" /></div>
+                        <div className='post-wrap'>
+                            <textarea name="content" value={content} ref={postRef} onChange={updatePost} id="" placeholder="What's up?!" className='text-area'></textarea>
+                            <input type="file" name="image" id="" ref={inputRef} accept='image/*' onChange={imageChange} className='image-select' />
+                            {display &&
+                                <div className='post-image-display'>
+                                    <img src={image} alt=""  ref={imageRef}/>
+                                    <FontAwesomeIcon icon={faXmarkCircle} className='close-image' onClick={clickClose} />
+                                </div>
+                            }
+                        </div>
+                        <div className='post-buttons' ref={buttonsRef}>
                             <div className='emoji-button'>
-                                <input type="file" name="image" id="" ref={inputRef} accept='image/*' onChange={imageChange} className='image-select' />
                                 <div className='image-icon'><FontAwesomeIcon icon={faImage} onClick={selectFile} /></div>
                                 <div className='smile-icon'><FontAwesomeIcon icon={faSmile} onClick={clickEmoji} />
                                     {emoji &&
@@ -171,12 +179,10 @@ export const Home = (props) => {
                             <div className='post-submit'><Button disabled={display || content.trim().length > 0 ? false : true} type='submit' className='sub'>post</Button></div>
                         </div>
                     </form>
-                </div>
             </div>
             {posts.map((item, index) => (
-
                 <Link href={`/comment/show/${item.id}`} className='links'>
-                    <div className='post-body' key={index} onClick={()=>clickPost(item.id)}>
+                    <div className='post-body' key={index} onClick={() => clickPost(item.id)}>
                         <div className='post-header'>
                             <Link href={`/profile/${item.user.id}`} className='links'><img src={item.user.profile.image ? '/storage/' + item.user.profile.image : '/storage/profile/blank.svg'} alt="" className='post-profile-image' /></Link>
                             <div className='post-username-wrap'><Link href={`/profile/${item.user.id}`} className='links'><span className='post-username'>{item.user.name}</span></Link>@{item.user.profile.username}<span className='post-time'><FontAwesomeIcon icon={faCircle} className='circle' />{calcTime(item.created_at)}</span></div>
@@ -186,8 +192,8 @@ export const Home = (props) => {
                             {item.content && <p className='user-post-content'>{item.content}</p>}
                             {item.image && <img src={`/storage/${item.image}`} alt="" />}
                             <div className='post-comments'>
-                                <div className='comment-wrap'><div className='comment-hover' onClick={(event)=>clickComment(event,item)}><FontAwesomeIcon icon={faComment} className='comment-icon' /></div>{item.comments.length}</div>
-                                <div className='like-wrap'><div className='like-hover' onClick={(event) => submitLike(event,item.id)}><FontAwesomeIcon icon={like ? SolidHeart : faHeart} beat={like ? true : false} className='comment-icon' id={like ? 'click-color' : null} /></div>{item.unlike.length}</div>
+                                <div className='comment-wrap'><div className='comment-hover' onClick={(event) => clickComment(event, item)}><FontAwesomeIcon icon={faComment} className='comment-icon' /></div>{item.comments.length}</div>
+                                <div className='like-wrap' id={item?.unlike[0]?.id==auth_user.user.id ? 'click-color' :null}><div className='like-hover' onClick={(event) => submitLike(event, item.id)}><FontAwesomeIcon icon={item?.unlike[0]?.id==auth_user.user.id ? SolidHeart : faHeart}  id={item?.unlike[0]?.id==auth_user.user.id ? 'click-color' :null}className='comment-icon' /></div>{item.unlike.length}</div>
                             </div>
                         </div>
                     </div>

@@ -1,5 +1,6 @@
 import React from 'react'
-import { faImage, faFaceSmile, faPaperPlane, faXmarkCircle } from '@fortawesome/free-regular-svg-icons';
+import { faImage, faFaceSmile, faPaperPlane } from '@fortawesome/free-regular-svg-icons';
+import { faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Message } from '@/Components/Message';
 import { useRef } from 'react';
@@ -20,6 +21,9 @@ export default function Chat({ receiver_id, profile }) {
     const [emoji, setEmoji] = useState(false);
     const [keyUp, setKeyUp] = useState(false);
     const [load, setLoad] = useState([]);
+    const [close, setClose] = useState(false);
+    const [display, setDisplay] = useState(false);
+    const [image, setImage] = useState([]);
     useEffect(() => {
         axios.get(`/load/${user.auth.user.id}/${receiver_id}`)
             .then((response) => setLoad(response.data))
@@ -51,6 +55,19 @@ export default function Chat({ receiver_id, profile }) {
 
     const onEmojiClick = (event) => {
         setMessage(prevPost => prevPost + event.emoji);
+    }
+
+    const clickClose = () => {
+        setClose(true)
+        setImage(null)
+        setDisplay(false)
+    }
+    const imageChange = (event) => {
+        if (event.target.files && event.target.files[0]) {
+            setImage(URL.createObjectURL(event.target.files[0]));
+            setDisplay(true);
+            setKeyUp(true);
+        }
     }
 
     let formData = new FormData();
@@ -96,22 +113,34 @@ export default function Chat({ receiver_id, profile }) {
 
                     </div>
                 </div>
-                <div className='text-message-area'>
-                    <div className='text-message-wrap' ref={areaRef}>
-                        <div className='text-icon' onClick={clickPhoto}><FontAwesomeIcon icon={faImage} className='' /></div>
-                        <input type="file" className='message-photo' ref={photoRef} accept='image/*' name='image' />
-                        {emoji && <div className='message-emoji'><EmojiPicker height={400} width="100%" onEmojiClick={onEmojiClick} /></div>}
-                        <div className='text-smile-icon' onClick={emojiClick}><FontAwesomeIcon icon={faFaceSmile} className='' /></div>
-                        <div className='chat-area'>
-                            <div className='message-selected-image' ref={imageRef}>
-                                <img src="/storage/profile.blank.svg" alt="" />
-                                <FontAwesomeIcon icon={faXmarkCircle} className='close-image' />
+                <div className='text-message-area' >
+                    <div className='chat-wrap'>
+                        {display &&
+                            <div className='show-chat-image'>
+                                <img src={image} alt="" />
+                                <FontAwesomeIcon icon={faXmarkCircle} className='close-chat-image' onClick={clickClose} />
                             </div>
-                            <textarea name="message" ref={messageRef} value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={onKeyPress} className='chat-text-area' maxLength={150} placeholder='start a new message here'>
-                            </textarea>
+                        }
+                        <div className='chat-action' ref={areaRef}>
+                            <div className='chat-buttons'>
+                                <div className='text-icon' onClick={clickPhoto}><FontAwesomeIcon icon={faImage} /></div>
+                                <input type="file" className='message-photo' onChange={imageChange} ref={photoRef} accept='image/*' name='image' />
+                                {emoji && <div className='message-emoji'><EmojiPicker height={400} width="100%" onEmojiClick={onEmojiClick} /></div>}
+                                <div className='text-smile-icon' onClick={emojiClick}><FontAwesomeIcon icon={faFaceSmile} /></div>
+                            </div>
+                            <div className='chat-input'>
+                                <textarea
+                                    name="message" value={message}
+                                    ref={messageRef}
+                                    onChange={(e) => setMessage(e.target.value)} onKeyDown={onKeyPress}
+                                    className='chat-text-area' maxLength={300} placeholder='start a new message here'>
+
+                                </textarea>
+                            </div>
+                            {keyUp && <div className='text-paper-icon'><FontAwesomeIcon icon={faPaperPlane} className='' type='submit' onClick={sendMessage} /></div>}
                         </div>
-                        {keyUp && <div className='text-paper-icon'><FontAwesomeIcon icon={faPaperPlane} className='' type='submit' onClick={sendMessage} /></div>}
                     </div>
+
                 </div>
             </div>
             <div className='search-message'><SearchMessage /></div>

@@ -31,14 +31,17 @@ class MessageController extends Controller
     public function store($id)
     {
         $data = request()->validate([
-            'message'=> "required|string",
+            'message'=> "nullable",
+            // 'image' => 'nullable|image'
         ]);
-
         try {
+            // $imagePath = request('image') ? request('image')->store('messages','public') : ' ';
+            // $content = request('message') ? request('message') : ' ';
             $message = $this->chat->sendMessage([
                 'sender_id'=>request()->user()->id,
                 'receiver_id'=>$id,
                 'message'=> $data['message'],
+                // 'image' => $imagePath,
             ]);
             event(new MessageSent($message));
             return $message;

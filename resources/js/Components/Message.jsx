@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { faAnglesUp, faAnglesDown } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
@@ -48,6 +49,8 @@ export const Message = (props) => {
                 <div className='message' onClick={clickUp}>
                     <div style={{ position: 'relative', width: '100%', display: 'flex' }}>
                         Message
+                        <div className='message-icon-wrap'><FontAwesomeIcon icon={faEnvelope} className='icon-angle' /></div>
+                        <div className='message-count'>5</div>
                         <div className='icon-wrap'><FontAwesomeIcon icon={faAnglesUp} className='icon-angle' /></div>
                     </div>
                 </div>
@@ -61,14 +64,20 @@ export const Message = (props) => {
                     </div>
                     <div style={{ marginTop: '8vh' }}>
                         {follow_match.map((index, i) => (
-                        <Link href={`/messages/${index.id}`} className='links'>
-                        <div key={index}>
-                            <div className='message-list' onClick={() => console.log("index")}>
-                                <div className='list-image'><img src={index.image?"/storage/"+index.image :"/storage/profile/blank.svg"} alt="" className='rounded-circle' /></div>
-                                <div className='list-name'><span style={{ fontWeight: '600', marginRight: '0.5vw' }}>{index.name}</span>{index.username}</div>
-                            </div>
-                        </div>
-                        </Link>
+                            <Link href={`/messages/${index.id}`} className='links'>
+                                <div key={index}>
+                                    <div className='message-list' onClick={() => console.log("index")}>
+                                        <div className='list-header'>
+                                            <div className='list-image'><img src={index.image ? "/storage/" + index.image : "/storage/profile/blank.svg"} alt="" className='rounded-circle' /></div>
+                                            <div className='list-name'><span style={{ fontWeight: '600', marginRight: '0.5vw' }}>{index.name}</span>{index.username}</div>
+                                        </div>
+                                        <div className='list-content'>
+                                        <div className='latest-message'>giasguijshvjh</div>
+                                        <span className='chat-count'>3</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
                         ))}
                     </div>
                 </div>
