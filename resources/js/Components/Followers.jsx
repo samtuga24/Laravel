@@ -3,16 +3,18 @@ import { useState } from 'react'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link } from '@inertiajs/react';
+import { useEffect } from 'react';
 export const Followers = (props) => {
     let user = props.user
     let following = props.following
     let followers = props.followers
     // console.log("user", user)
-    // console.log("followers", followers)
-    // console.log("following", following)
+    console.log("followers", followers)
+    console.log("following", following)
     const [followingTab, setFollowingTab] = useState(true)
     const [followersTab, setFollowersTab] = useState(false)
     const [hover, setHover] = useState(false)
+    const [match, setMatch] = useState("")
     const clickFollowingTab = () => {
         setFollowingTab(true)
         setFollowersTab(false)
@@ -21,12 +23,21 @@ export const Followers = (props) => {
         setFollowingTab(false)
         setFollowersTab(true)
     }
-     const mouseover = () =>{
+    const mouseover = () => {
         setHover(true)
     }
-    const mouseleave = () =>{
+    const mouseleave = () => {
         setHover(!hover)
     }
+
+    let matchArray = []
+        following.map((item, index) => {
+            matchArray.push(item.id)
+        })
+
+    
+    console.log(matchArray)
+    console.log(matchArray.includes(5))
     return (
         <div className='followers-wrap'>
             <div className='header-wrap'>
@@ -54,16 +65,14 @@ export const Followers = (props) => {
                     following.map((item, index) => (
                         <div className='following-body' key={index}>
                             <div className='following-image'>
-                                <img src="/storage/profile/blank.svg" alt="" />
+                                <img src={item.image ? '/storage/' + item.image : '/storage/profile/blank.svg'} alt="" />
                                 <div className='following-name'>
                                     <span className='following-username'>{item.name}</span>
                                     <span className='following-handle'>@{item.username}</span>
                                     <span className='following-bio'>{item.bio}</span>
                                 </div>
                             </div>
-                            <button className='following-button' id={hover ? 'hover-color' : null}
-                                onClick={() => alert(index)} onMouseOver={mouseover}
-                                onMouseLeave={mouseleave}>{hover ? 'Unfollow' : 'Following'}</button>
+                            <span className='following-button'><button className='button-text'></button></span>
                         </div>
                     ))}
 
@@ -76,14 +85,16 @@ export const Followers = (props) => {
                     followers.map((item, index) => (
                         <div className='following-body' key={index}>
                             <div className='following-image'>
-                                <img src="/storage/profile/blank.svg" alt="" />
+                                <img src={item.profile.image ? '/storage/' + item.profile.image : '/storage/profile/blank.svg'} alt="" />
                                 <div className='following-name'>
-                                    <span className='following-username'>{item.name}</span>
-                                    <span className='following-handle'>@{item.username}</span>
-                                    <span className='following-bio'>{item.bio}</span>
+                                    <span className='following-username'>{item.profile.name}</span>
+                                    <span className='following-handle'>@{item.profile.username}</span>
+                                    <span className='following-bio'>{item.profile.bio}</span>
                                 </div>
                             </div>
-                            <button className='followers-button' onClick={() => alert("click me")}>Follow</button>
+                            <button className={matchArray.includes(item.id) ? 'match-button' : 'followers-button'} onClick={() => alert(item.id)}>
+                                {matchArray.includes(item.id) ? 'Following' : 'Follow'}
+                            </button>
                         </div>
                     ))
                 }

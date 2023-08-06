@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('image');
             $table->unsignedBigInteger('sender_id');
             $table->unsignedBigInteger('receiver_id');
+            $table->integer('status')->default(0);
+            $table->integer('read_status')->default(0);
             $table->timestamps();
         });
     }

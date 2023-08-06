@@ -18,8 +18,10 @@ class PostController extends Controller
     public function show()
     {
         $followersId = auth()->user()->following()->pluck('profiles.user_id');
-        $posts = Post::with(['user.profile','unlike','comments'])->whereIn('user_id',$followersId)->latest()->get();
-        return $posts ;
+        $posts = Post::with(['user.profile','unlike','comments.replies'])
+                    ->whereIn('user_id',$followersId)
+                    ->latest()->get();
+        return $posts;
     }
     public function store():RedirectResponse
     {

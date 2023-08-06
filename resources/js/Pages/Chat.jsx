@@ -24,6 +24,7 @@ export default function Chat({ receiver_id, profile }) {
     const [close, setClose] = useState(false);
     const [display, setDisplay] = useState(false);
     const [image, setImage] = useState([]);
+    const [image_url, setImageURL] = useState([]);
     useEffect(() => {
         axios.get(`/load/${user.auth.user.id}/${receiver_id}`)
             .then((response) => setLoad(response.data))
@@ -64,14 +65,19 @@ export default function Chat({ receiver_id, profile }) {
     }
     const imageChange = (event) => {
         if (event.target.files && event.target.files[0]) {
-            setImage(URL.createObjectURL(event.target.files[0]));
+            setImage(event.target.files[0]);
+            setImageURL(URL.createObjectURL(event.target.files[0]));
             setDisplay(true);
             setKeyUp(true);
         }
     }
 
+    // var display_message = document.querySelector('#display-message');
+    // display_message.scrollTop = display_message.scrollHeight - display_message.clientHeight;
+
     let formData = new FormData();
     formData.append('message', message);
+    formData.append('image', image)
     const sendMessage = () => {
         axios.post(`/messages/post/${receiver_id}`, formData, {
             headers: {
@@ -81,10 +87,12 @@ export default function Chat({ receiver_id, profile }) {
         }).then((response) => {
             setLoad(prev => [...prev, response.data]);
             setMessage(" ")
+            setDisplay(false);
         }).catch((error) => {
             console.log(error);
         })
     }
+    console.log(load)
 
 
     const onKeyPress = (e) => {
@@ -106,9 +114,25 @@ export default function Chat({ receiver_id, profile }) {
                         </div>
 
                     </div>
-                    <div className='display-message'>
+                    <div className='display-message' id='display-message'>
                         {load.map((item, index) => (
-                            <div className={user.auth.user.id == item.sender_id ? 'sent-wrap' : 'reply-wrap'}>{item.message}</div>
+                            <>
+                                {item?.message.trim().length > 0 ?
+                                    <div key={index} className={user.auth.user.id == item.sender_id ? 'sent-wrap' : 'reply-wrap'}>
+                                        {item.message}
+                                    </div>
+                                    :
+                                    null
+                                }
+                                {item?.image.trim().length > 0 ?
+                                    <div className={user.auth.user.id == item.sender_id ? 'image-sent' : 'image-reply'}>
+
+                                        <img src={'/storage/' + item.image} alt="" />
+                                    </div>
+                                    :
+                                    null
+                                }
+                            </>
                         ))}
 
                     </div>
@@ -117,7 +141,7 @@ export default function Chat({ receiver_id, profile }) {
                     <div className='chat-wrap'>
                         {display &&
                             <div className='show-chat-image'>
-                                <img src={image} alt="" />
+                                <img src={image_url} alt="" />
                                 <FontAwesomeIcon icon={faXmarkCircle} className='close-chat-image' onClick={clickClose} />
                             </div>
                         }

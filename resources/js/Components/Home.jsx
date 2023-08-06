@@ -12,7 +12,7 @@ import { CommentModal } from './CommentModal';
 import { useContext } from 'react';
 import ProfileContext from '@/context/ProfileContext';
 export const Home = (props) => {
-    const [home, setHome] = useState([]);
+    const [home, setHome] = useState(true);
     const [emoji, setEmoji] = useState(false);
     const [showContent, setShowContent] = useState(true);
     const [close, setClose] = useState(false);
@@ -56,13 +56,12 @@ export const Home = (props) => {
                 // setLikeAction(response.data[0].unlike)
             })
             .catch((error) => console.log(error))
-    }, [like])
+    }, [posts])
 
-    // console.log(posts[0].unlike[0].id==auth_user.user.id)
+    
 
 
     useEffect(() => {
-        // console.log(imageRef.current.style.clientHeight)
         if (postRef && postRef.current) {
             postRef.current.style.height = "0px";
             const taHeight = postRef.current.scrollHeight;
@@ -142,12 +141,22 @@ export const Home = (props) => {
     }
     console.log(modal_post)
 
-    const submitLike = (event, id) => {
+    const submitLike = (event, id,receiver) => {
         event.preventDefault();
         axios.post(`/like/${id}`)
-            .then((response) => console.log("home response", response.data))
+            .then((response) => {
+                console.log("home response", response.data)
+                setLike(!like);
+            })
             .catch((error) => console.log(error))
-        setLike(!like);
+        if (!like) {
+            axios.post(`/notify/post/${receiver}/liked your post.`)
+                .then((response) => {
+                    console.log(response)
+                }).catch((error) => {
+                    console.log(error)
+                })
+        }
     }
 
 
@@ -193,7 +202,7 @@ export const Home = (props) => {
                             {item.image && <img src={`/storage/${item.image}`} alt="" />}
                             <div className='post-comments'>
                                 <div className='comment-wrap'><div className='comment-hover' onClick={(event) => clickComment(event, item)}><FontAwesomeIcon icon={faComment} className='comment-icon' /></div>{item.comments.length}</div>
-                                <div className='like-wrap' id={item?.unlike[0]?.id==auth_user.user.id ? 'click-color' :null}><div className='like-hover' onClick={(event) => submitLike(event, item.id)}><FontAwesomeIcon icon={item?.unlike[0]?.id==auth_user.user.id ? SolidHeart : faHeart}  id={item?.unlike[0]?.id==auth_user.user.id ? 'click-color' :null}className='comment-icon' /></div>{item.unlike.length}</div>
+                                <div className='like-wrap' id={item?.unlike[0]?.id===auth_user.user.id ? 'click-color' :null}><div className='like-hover' onClick={(event) => submitLike(event,item.id,item.user.id)}><FontAwesomeIcon icon={item?.unlike[0]?.id==auth_user.user.id ? SolidHeart : faHeart}  id={item?.unlike[0]?.id==auth_user.user.id ? 'click-color' :null}className='comment-icon' /></div>{item.unlike.length}</div>
                             </div>
                         </div>
                     </div>

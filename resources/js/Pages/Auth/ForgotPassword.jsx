@@ -3,10 +3,11 @@ import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, useForm } from '@inertiajs/react';
+import InputLabel from '@/Components/InputLabel';
 
 export default function ForgotPassword({ status }) {
     const { data, setData, post, processing, errors } = useForm({
-        email: '',
+        input_type: '',
     });
 
     const onHandleChange = (event) => {
@@ -24,27 +25,29 @@ export default function ForgotPassword({ status }) {
             <Head title="Forgot Password" />
 
             <div className="mb-4 text-sm text-gray-600">
-                Forgot your password? No problem. Just let us know your email address and we will email you a password
+                Forgot your password? No problem. Just let us know your input_type address and we will input_type you a password
                 reset link that will allow you to choose a new one.
             </div>
 
             {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
 
             <form onSubmit={submit}>
+                <InputLabel htmlFor="input_type" value="Email/Username" />
                 <TextInput
-                    id="email"
-                    type="email"
-                    name="email"
-                    value={data.email}
+                    id="input_type"
+                    type="text"
+                    name="input_type"
+                    value={data.input_type}
                     className="mt-1 block w-full"
                     isFocused={true}
                     onChange={onHandleChange}
                 />
 
                 <InputError message={errors.email} className="mt-2" />
+                <InputError message={errors.username} className="mt-2" />
 
                 <div className="flex items-center justify-end mt-4">
-                    <PrimaryButton className="ml-4" disabled={processing}>
+                    <PrimaryButton className="ml-4 login-button" disabled={processing}>
                         Email Password Reset Link
                     </PrimaryButton>
                 </div>

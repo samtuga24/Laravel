@@ -34,9 +34,12 @@ class NewPasswordController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $input_type = filter_var($request->input('input_type'), FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $request->merge([$input_type => $request->input('input_type')]);
         $request->validate([
             'token' => 'required',
-            'email' => 'required|email',
+            'email' => ['sometimes','required','email','exists:users,email'],
+            'username' => ['sometimes','required','string','exists:users,username'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -44,7 +47,7 @@ class NewPasswordController extends Controller
         // will update the password on an actual user model and persist it to the
         // database. Otherwise we will parse the error and return the response.
         $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
+            $request->only($input_type, 'password', 'password_confirmation', 'token'),
             function ($user) use ($request) {
                 $user->forceFill([
                     'password' => Hash::make($request->password),
@@ -63,7 +66,7 @@ class NewPasswordController extends Controller
         }
 
         throw ValidationException::withMessages([
-            'email' => [trans($status)],
+            $input_type => [trans($status)],
         ]);
     }
 }

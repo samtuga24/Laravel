@@ -11,9 +11,10 @@ export function ProfileProvider({ children }) {
     const [auth_profile, setProfile] = useState(false);
     const [notification, setNotification] = useState(false);
     const [setting, setSetting] = useState(false);
+    const [authenticated, setAuthenticated] = useState([]);
     return (
         <>
-            <ProfileContext.Provider value={{ receiver, setReceiver, dash, setDash, auth_profile, setProfile, notification, setNotification, setting, setSetting }}>
+            <ProfileContext.Provider value={{ receiver, setReceiver, dash, setDash, auth_profile, setProfile, notification, setNotification, setting, setSetting, authenticated, setAuthenticated }}>
                 {children}
             </ProfileContext.Provider>
         </>

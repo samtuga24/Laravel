@@ -14,7 +14,7 @@ export default function Notification(props) {
     const user = usePage().props
     const [sender, setSender] = useState([]);
     const [content, setContent] = useState([]);
-    const {dash, setDash, auth_profile, setProfile, notification, setNotification, setting, setSetting} = useContext(ProfileContext);
+    const { dash, setDash, auth_profile, setProfile, notification, setNotification, setting, setSetting } = useContext(ProfileContext);
     setDash(false)
     setProfile(false)
     setNotification(true);
@@ -25,10 +25,12 @@ export default function Notification(props) {
             .then((response) => {
                 setContent(response.data.notify)
                 setSender(response.data.sender)
+                console.log("liked-notification", response)
             }).catch((error) => console.log(error))
     }, [])
     console.log(content[0]?.content === "followed you.")
-    console.log(sender[0])
+    console.log(content[0]?.content === "liked your post.")
+    console.log("sender", sender[0])
     return (
         <div className="dash-wrap">
             <div className='side-nav'><SideNav /></div>
@@ -37,7 +39,7 @@ export default function Notification(props) {
                 <div className="notification-wrap">
                     {sender.map((item, index) => (
                         <>
-                            {content[index]?.content === "followed you." &&
+                            {content[0]?.content === "followed you." &&
                                 <Link href={`/profile/${item.id}`} className="links">
                                     <div className="notification" >
                                         <div className="notification-header">
@@ -48,15 +50,17 @@ export default function Notification(props) {
                                     </div>
                                 </Link>
                             }
-                            {content[index]?.content === "liked" &&
-                                <div className="notification">
-                                    <div className="notification-header">
-                                        <div className="heart-icon"><FontAwesomeIcon icon={faHeart} /></div>
-                                        <div className="notify-image"><img src="/storage/profile/blank.svg" alt="" /></div>
+                            {content[0]?.content === "liked your post." &&
+                                <Link href={`/profile/${item.id}`} className="links">
+                                    <div className="notification">
+                                        <div className="notification-header">
+                                            <div className="heart-icon"><FontAwesomeIcon icon={faHeart} /></div>
+                                            <div className="notify-image"><img src="/storage/profile/blank.svg" alt="" /></div>
+                                        </div>
+                                        <div className="notification-content"><span className="notify-username">{item.name}</span>liked your post</div>
+                                        <div className="notification-post"></div>
                                     </div>
-                                    <div className="notification-content"><span className="notify-username">username</span>liked your tweet</div>
-                                    <div className="notification-post">liked your tweet</div>
-                                </div>
+                                </Link>
                             }
                         </>
                     ))}

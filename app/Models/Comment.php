@@ -27,6 +27,11 @@ class Comment extends Model
 
     public function replies()
     {
-        return $this->hasMany(Comment::class)->with('comments');
+        return $this->hasMany(Comment::class,'comment_id')->with('replies');
+    }
+
+    public function user_comment_like()
+    {
+        return $this->belongsToMany(User::class);
     }
 }

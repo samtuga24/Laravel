@@ -16,6 +16,15 @@ class NotificationController extends Controller
         $this->notification=$notification;
     }
 
+    public function index()
+    {
+        $unreadNotification = Notification::where('receiver_id', '=', auth()->user()->id)
+                            ->where('status', '=', 0)
+                            ->latest()
+                            ->get();
+        return $unreadNotification;
+    }
+
     public function show(User $user)
     {
         $notify = Notification::where('receiver_id', '=', $user->id)->latest()->get();
@@ -28,17 +37,25 @@ class NotificationController extends Controller
 
     public function store($id,$content)
     {
+        
         try{
             $notification = $this->notification->sendNotification([
                 'sender_id'=>request()->user()->id,
                 'receiver_id'=>$id,
                 'content'=> $content,
             ]);
-            // dd($notification);
+
+            
             event(new NotificationSent($notification));
             return $notification;
         }catch (\Throwable $th) {
             return Redirect::to("profile/{$id}");
         }
+    }
+
+    public function update()
+    {
+        $notify = Notification::where('receiver_id', '=', auth()->user()->id);
+        return $notify->update(['status'=>1]);
     }
 }

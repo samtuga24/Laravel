@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 export default function Dashboard() {
     return (
             <div className='dash-wrap'>
-                <Head title="Dashboard" />
+                <Head title="home" />
                 <div className='side-nav'><SideNav/></div>
                 <div className='home'><Home/></div>
                 <div className='search-message'><SearchMessage/></div>
