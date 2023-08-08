@@ -7,7 +7,6 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 
 export default function CommentView({post}) {
-    console.log(post)
     return (
             <div className='dash-wrap'>
                 <Head title="Post" />

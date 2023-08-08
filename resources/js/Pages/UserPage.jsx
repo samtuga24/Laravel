@@ -39,8 +39,6 @@ export default function UserPage({ profile, auth_following }) {
     update_following.map((item, index) => {
         user_following.push(item.id)
     })
-    // console.log("user-following", update_following)
-    // console.log("user-match-following", user_following)
     const clickPost = () => {
         setPost(true)
         setMedia(false)
@@ -69,7 +67,6 @@ export default function UserPage({ profile, auth_following }) {
 
     const submitFollow = () => {
         axios.post(`/follow/${profile[0].id}`).then((response) => {
-            console.log("response", response.data.attached.length)
             setAttached(response.data.attached.length)
         }).catch((error) => {
             console.log(error)
@@ -77,7 +74,6 @@ export default function UserPage({ profile, auth_following }) {
 
         axios.post(`/notify/post/${profile[0].id}/followed you.`)
             .then((response) => {
-                console.log(response)
             }).catch((error) => {
                 console.log(error)
             })
@@ -87,16 +83,12 @@ export default function UserPage({ profile, auth_following }) {
     useEffect(() => {
         axios.get(`/edit/${profile[0].id}`)
             .then((response) => {
-                console.log(response.data.profile[0])
                 setUpdateFollow(response.data.profile[0].followers)
                 setFollowing(response.data.profile[0].user.following)
                 setUpdateFollowing(response.data.following)
             })
             .catch((error) => { console.log(error) })
     }, [attached])
-    // console.log("update-followers",update_following)
-    // console.log("update-following",update_following)
-    // console.log("update-user-following",following)
 
     const calcTime = (time) => {
         const current = new Date();
@@ -129,7 +121,7 @@ export default function UserPage({ profile, auth_following }) {
     const submitLike = (id) => {
         // e.preventDefault();
         axios.post(`/like/${id}`)
-            .then((response) => console.log("home response", response.data))
+            .then((response))
             .catch((error) => console.log(error))
         setLike(!like);
     }

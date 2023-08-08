@@ -10,7 +10,6 @@ import { Link } from '@inertiajs/react';
 import { CommentModal } from './CommentModal';
 export default function Comments(props) {
     let post = props.post;
-    console.log(post[0].comments)
     const [commentCount, setCount] = useState(0);
     const [display, setDisplay] = useState(false);
     const [comment, setContent] = useState('');
@@ -20,15 +19,11 @@ export default function Comments(props) {
     const [comment_id, setCommentID] = useState();
     const post_comment = [post[0].comments.length];
     const post_like = [post[0].unlike.length];
-    console.log("likes", post_like)
     const [modalShow, setModalShow] = useState(false);
-    // console.log(post_comment.length)
     const [emoji, setEmoji] = useState(false);
     const postRef = useRef();
     const areaRef = useRef();
-    console.log(post_comment)
     useEffect(() => {
-        // console.log(imageRef.current.style.clientHeight)
         if (postRef && postRef.current) {
             postRef.current.style.height = "0px";
             const taHeight = postRef.current.scrollHeight;
@@ -100,8 +95,7 @@ export default function Comments(props) {
     const submitLike = (event, id) => {
         event.preventDefault();
         axios.post(`/like/${id}`)
-            .then((response) => {
-                console.log("comment response", response.data)  
+            .then((response) => { 
                 setLike(!like);              
             })
             .catch((error) => console.log(error))
@@ -114,8 +108,6 @@ export default function Comments(props) {
         //         })
         // }
     }
-    console.log(modal_post)
-
     return (
         <div className='comment-body'>
             <div className='post-header'>

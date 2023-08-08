@@ -10,7 +10,6 @@ import { useEffect } from 'react';
 import axios from 'axios';
 
 export default function MessageView({profile, messages, receiver_id}) {
-    console.log(messages)
     return (
         <div className='dash-wrap'>
         <div className='side-nav'><SideNav /></div>

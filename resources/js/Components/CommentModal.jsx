@@ -11,16 +11,6 @@ import EmojiPicker from 'emoji-picker-react';
 export const CommentModal = (props) => {
   let post = props.post
   let comments = props.comments
-  // let comment_id;
-  // let post_id;
-  // if(post?.content){
-  //   post_id = post?.id
-  // }else{
-  //   comment_id=post?.id
-  // }
-  console.log('comment_id',post?.id)
-  console.log('comments',comments)
-  // console.log('post_id',post?.id)
   const [display, setDisplay] = useState(false);
   const [comment, setContent] = useState('');
   const [image, setImage] = useState([]);
@@ -90,7 +80,7 @@ export const CommentModal = (props) => {
         return "a long time ago"
     }
 }
-  // console.log("commenet-modal", post)
+
   return (
     <Modal
       {...props}

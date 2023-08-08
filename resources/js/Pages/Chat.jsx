@@ -72,9 +72,6 @@ export default function Chat({ receiver_id, profile }) {
         }
     }
 
-    // var display_message = document.querySelector('#display-message');
-    // display_message.scrollTop = display_message.scrollHeight - display_message.clientHeight;
-
     let formData = new FormData();
     formData.append('message', message);
     formData.append('image', image)
@@ -92,8 +89,6 @@ export default function Chat({ receiver_id, profile }) {
             console.log(error);
         })
     }
-    console.log(load)
-
 
     const onKeyPress = (e) => {
         if (e.which === 13) {

@@ -25,12 +25,8 @@ export default function Notification(props) {
             .then((response) => {
                 setContent(response.data.notify)
                 setSender(response.data.sender)
-                console.log("liked-notification", response)
             }).catch((error) => console.log(error))
     }, [])
-    console.log(content[0]?.content === "followed you.")
-    console.log(content[0]?.content === "liked your post.")
-    console.log("sender", sender[0])
     return (
         <div className="dash-wrap">
             <div className='side-nav'><SideNav /></div>

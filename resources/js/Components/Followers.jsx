@@ -8,9 +8,7 @@ export const Followers = (props) => {
     let user = props.user
     let following = props.following
     let followers = props.followers
-    // console.log("user", user)
-    console.log("followers", followers)
-    console.log("following", following)
+
     const [followingTab, setFollowingTab] = useState(true)
     const [followersTab, setFollowersTab] = useState(false)
     const [hover, setHover] = useState(false)
@@ -36,8 +34,6 @@ export const Followers = (props) => {
         })
 
     
-    console.log(matchArray)
-    console.log(matchArray.includes(5))
     return (
         <div className='followers-wrap'>
             <div className='header-wrap'>

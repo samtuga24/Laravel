@@ -50,7 +50,6 @@ export const SearchMessage = () => {
         // setToggle(!toggle)
         e.preventDefault();
         axios.post(`/follow/${id}`).then((response) => {
-            console.log("response", response.data)
         }).catch((error) => {
             console.log(error)
         })

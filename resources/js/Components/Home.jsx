@@ -39,8 +39,6 @@ export const Home = (props) => {
 
     const min = buttonsRef.current?.clientHeight;
     const max = imageRef.current?.clientHeight;
-    console.log("button-height",min)
-    console.log("image-height",max)
     useEffect(() => {
         axios.get(`/dashboard/${auth_user.user.id}`)
             .then((response) => {
@@ -129,7 +127,6 @@ export const Home = (props) => {
     const clickPost = (id) => {
         axios.get(`/comment/show/${id}`)
             .then((response) => {
-                console.log(response)
             }).catch((error) => {
                 console.log(error)
             })
@@ -139,20 +136,17 @@ export const Home = (props) => {
         setModalShow(true)
         setModalPost(modal)
     }
-    console.log(modal_post)
 
     const submitLike = (event, id,receiver) => {
         event.preventDefault();
         axios.post(`/like/${id}`)
             .then((response) => {
-                console.log("home response", response.data)
                 setLike(!like);
             })
             .catch((error) => console.log(error))
         if (!like) {
             axios.post(`/notify/post/${receiver}/liked your post.`)
                 .then((response) => {
-                    console.log(response)
                 }).catch((error) => {
                     console.log(error)
                 })

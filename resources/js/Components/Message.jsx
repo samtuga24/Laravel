@@ -8,7 +8,6 @@ import axios from 'axios';
 import { useRef } from 'react';
 export const Message = (props) => {
     const auth = usePage().props;
-    console.log(auth.auth.user.id)
     const [auth_following, setFollowing] = useState([]);
     const [users, setUsers] = useState([]);
     const [auth_followers, setFollowers] = useState([]);
@@ -31,8 +30,6 @@ export const Message = (props) => {
             .then((response) => { setCount(response.data) })
             .catch((error) => { console.log(error) })
     }, [notify_count])
-
-    console.log(notify_count)
 
 
     const [message, setMessage] = useState(true);
@@ -58,13 +55,11 @@ export const Message = (props) => {
     useEffect(() => {
         axios.get('/recent')
             .then((response) => {
-                console.log(response.data.recent_messages)
                 setUsers(response.data.recent_messages)
             })
             .catch((error) => { console.log(error) })
     }, [users])
 
-    console.log(users)
 
     const readMessage = (id) =>{
         axios.patch(`/read/message/${id}`).then((response) => {
