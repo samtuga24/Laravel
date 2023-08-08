@@ -4,7 +4,7 @@ import { SearchMessage } from '@/Components/SearchMessage';
 import { SideNav } from '@/Components/SideNav';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import { Chat } from './Chat';
+import Chat  from './Chat';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import axios from 'axios';
