@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { faHome, faGear, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { faUser, faEnvelope, faBell } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { Message } from './Message';
@@ -87,29 +87,29 @@ export const SideNav = (props) => {
                 <div className='nav-profile-handle'>@{user_profile.username}</div>
                 <div className='nav-profile-following'>
                     <div className='following'>
-                        <a href={`/followers/${details.id}`} className='links'>
+                        <Link href={`/followers/${details.id}`} className='links'>
                             <span style={{ fontWeight: '700', marginRight: '0.2vw' }}>{following.length}</span>Following
-                        </a>
+                        </Link>
                     </div>
                     <div className='following'><span style={{ fontWeight: '700', marginRight: '0.2vw' }}>{followers.length}</span>Followers</div>
                 </div>
             </div>
             <div className='side-wrap'>
-                <a href='/dashboard' className='links'><div className='side-nav-list' onClick={homeClick} id={dash ? 'nav-color' : null}><FontAwesomeIcon icon={faHome} /><span className='nav-label'>Home</span></div></a>
-                <a href={`/profile/${details.id}`} className='links'><div className='side-nav-list' onClick={profileClick} id={auth_profile ? 'nav-color' : null}><FontAwesomeIcon icon={faUser} /><span className='nav-label'>Profile</span></div></a>
-                <a href='/notification' className='links'>
+                <Link href='/dashboard' className='links'><div className='side-nav-list' onClick={homeClick} id={dash ? 'nav-color' : null}><FontAwesomeIcon icon={faHome} /><span className='nav-label'>Home</span></div></Link>
+                <Link href={`/profile/${details.id}`} className='links'><div className='side-nav-list' onClick={profileClick} id={auth_profile ? 'nav-color' : null}><FontAwesomeIcon icon={faUser} /><span className='nav-label'>Profile</span></div></Link>
+                <Link href='/notification' className='links'>
                     <div className='side-nav-list' onClick={notificationClick} id={notification ? 'nav-color' : null}>
                         <FontAwesomeIcon icon={faBell} />
                         <span className='nav-label'>Notification</span>
                         {notify_count.length > 0 &&<span className='notification-count'>{notify_count.length}</span>}
                     </div>
-                </a>
-                <a href={route('profile.edit')} className='links'>
+                </Link>
+                <Link href={route('profile.edit')} className='links'>
                     <div className='side-nav-list' onClick={settingsClick} id={setting ? 'nav-color' : null}><FontAwesomeIcon icon={faGear} /><span className='nav-label'>Setting and privacy</span></div>
-                </a>
-                <a method="post" href={route('logout')} className='links'>
+                </Link>
+                <Link method="post" href={route('logout')} className='links'>
                     <div className='side-nav-list'><FontAwesomeIcon icon={faRightFromBracket} /><span className='nav-label'>Logout</span></div>
-                </a>
+                </Link>
             </div>
         </div>
     )

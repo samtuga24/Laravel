@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +19,7 @@ class ProviderController extends Controller
         return Socialite::driver($provider)->redirect();
     }
 
-    public function callback($provider)
+    public function callback($provider):RedirectResponse
     {
         try {
             $githubUser = Socialite::driver($provider)->user();
@@ -29,7 +30,7 @@ class ProviderController extends Controller
             $password = Str::random(12);
             if(!$user){
                 if(User::where('email',$githubUser->getEmail())->exists()){
-                    return redirect::to('/login')->withErrors(['email'=>'This email has a different user']);
+                    return redirect('/login')->withErrors(['email'=>'This email has a different user']);
                 }
                 $user = User::create([
                     'name' => $githubUser->getName(),
@@ -49,7 +50,7 @@ class ProviderController extends Controller
      
             return redirect('/dashboard');
         } catch (Exception $e) {
-            return $e;
+            return redirect('/login');
         }    
 
     }

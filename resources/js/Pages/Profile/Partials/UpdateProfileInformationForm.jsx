@@ -30,7 +30,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
-                <div>
+                {/* <div>
                     <InputLabel htmlFor="name" value="Name" />
 
                     <TextInput
@@ -44,7 +44,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                     />
 
                     <InputError className="mt-2" message={errors.name} />
-                </div>
+                </div> */}
 
                 <div>
                     <InputLabel htmlFor="email" value="Email" />

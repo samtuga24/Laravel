@@ -3,7 +3,14 @@ import { Link, Head } from '@inertiajs/react';
 import { faSquareXTwitter, faGithub } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 export default function Welcome(props) {
-    console.log(props)
+    const twitterClick = () =>{
+        window.open('https://twitter.com/_kwusu','_blank')
+    }
+
+    const githubClick = () =>{
+        window.open('https://github.com/samtuga24','_blank')
+    }
+    
     return (
         <>
             <Head title="Welcome" />
@@ -37,8 +44,8 @@ export default function Welcome(props) {
                 <div className='welcome-body'>
                     <div className='body-header'>samwus</div>
                     <div className='socials'>
-                        <FontAwesomeIcon icon={faSquareXTwitter} className='social-icon' />
-                        <FontAwesomeIcon icon={faGithub} className='social-icon' />
+                        <FontAwesomeIcon icon={faSquareXTwitter} className='social-icon' onClick={twitterClick}/>
+                        <FontAwesomeIcon icon={faGithub} className='social-icon' onClick={githubClick}/>
                         {/* <FontAwesomeIcon icon={faXTwitter} className='social-icon' /> */}
                     </div>
                 </div>

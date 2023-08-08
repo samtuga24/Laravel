@@ -35,6 +35,7 @@ Route::get('/', function () {
     ]);
 });
 
+
 Route::get('/auth/{provider}/redirect', [App\Http\Controllers\Auth\ProviderController::class, 'redirect']);
  
 Route::get('/auth/{provider}/callback', [App\Http\Controllers\Auth\ProviderController::class, 'callback']);
